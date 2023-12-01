@@ -14,7 +14,7 @@ namespace pr1
 
         private static object Second(string[] lines)
         {
-            var numbers = new[] 
+            var numbers = new[]
             {
                 "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
             };
@@ -29,7 +29,7 @@ namespace pr1
                         .Where(x => x.Index > -1)
                         .OrderBy(x => x.Index).Select(x => x.Number).Last();
                     if (first.Length > 1)
-                        first= (Array.IndexOf(numbers, first) + 1).ToString();
+                        first = (Array.IndexOf(numbers, first) + 1).ToString();
                     if (last.Length > 1)
                         last = (Array.IndexOf(numbers, last) + 1).ToString();
                     return first + last;
