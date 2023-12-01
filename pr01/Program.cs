@@ -1,15 +1,14 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
 var result = Second(lines);
 Console.WriteLine(result);
-Console.ReadLine();
 
 int Second(string[] lines)
 {
     var numbers = new[]
     {
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-    };
-    numbers = numbers.Union("1234567890".Select(c => "" + c)).ToArray();
+    }.Union("1234567890".Select(c => "" + c)).ToArray();
+
     var result = lines
         .Select(line =>
         {
