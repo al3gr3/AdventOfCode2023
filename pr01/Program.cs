@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-
-namespace pr1
+﻿namespace pr01
 {
     internal class Program
     {
