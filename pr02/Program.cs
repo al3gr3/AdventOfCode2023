@@ -39,7 +39,6 @@ int Second(string[] lines)
     }
     return otvet;
 }
-/*
 
 //Game 1: 3 blue, 4 red; 10 red, 20 green, 6 blue; 2 green
 int First(string[] lines)
@@ -79,4 +78,3 @@ bool Possible(string arg)
     }
     return true;
 }
-*/
