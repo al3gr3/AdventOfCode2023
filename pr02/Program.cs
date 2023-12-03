@@ -3,9 +3,7 @@
 var lines = File.ReadAllLines("TextFile1.txt");
 var result = Second(lines);
 
-
 Console.WriteLine(result);
-
 
 int Second(string[] lines)
 {
@@ -32,12 +30,12 @@ int Second(string[] lines)
                 if (color.Contains("green"))
                     greens = Math.Max(greens, amount);
                 if (color.Contains("red"))
-                    greens = Math.Max(reds, amount);
+                    reds = Math.Max(reds, amount);
                 if (color.Contains("blue"))
-                    greens = Math.Max(blues, amount);
+                    blues = Math.Max(blues, amount);
             }
         }
-        otvet += result * greens * blues;
+        otvet += reds * greens * blues;
     }
     return otvet;
 }
