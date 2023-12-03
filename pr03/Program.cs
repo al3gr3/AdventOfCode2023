@@ -40,7 +40,14 @@ int Second(List<string> lines)
                 var correctDirections = directions
                     .Select(direction => Find(lineNr, i, direction, lines))
                     .Where(x => x != null)
-                    .GroupBy(x => x.Value + x.Left.X + x.Left.Y + x.Right.X + x.Right.Y)
+                    .GroupBy(x => string.Join("|", new[]
+                    {
+                        x.Value,
+                        x.Left.X,
+                        x.Left.Y,
+                        x.Right.X,
+                        x.Right.Y
+                    }.Select(n => n.ToString())))
                     .Select(grp => grp.First())
                     .ToList();
 
