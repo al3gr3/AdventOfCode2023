@@ -1,5 +1,5 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
-var result = Second(lines);
+var result = First(lines);
 Console.WriteLine(result);
 
 int Second(string[] lines)
@@ -16,15 +16,11 @@ int Second(string[] lines)
     return amounts.Sum();
 }
 
-int First(string[] lines) => lines.Select(line => ParseAmount(line))
-    .Select(amount =>
-    {
-        return amount > 0
-            ? Enumerable.Range(0, amount - 1).Aggregate(1, (s, n) => s *= 2)
-            : 0;
-    }
-    ).Sum();
-
+int First(string[] lines) => lines
+    .Select(line => ParseAmount(line))
+    .Where(amount => amount > 0)
+    .Select(amount => Enumerable.Range(0, amount - 1).Aggregate(1, (s, n) => s *= 2))
+    .Sum();
 
 int ParseAmount(string line)
 {
@@ -44,4 +40,3 @@ int ParseAmount(string line)
     var amount = ticket.Intersect(winning).Count();
     return amount;
 }
-
