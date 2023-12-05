@@ -1,7 +1,5 @@
-﻿using System.Data;
-
-var lines = File.ReadAllLines("TextFile1.txt");
-var result = First(lines);
+﻿var lines = File.ReadAllLines("TextFile1.txt");
+var result = Second(lines);
 Console.WriteLine(result);
 
 long Second(string[] lines)
@@ -27,7 +25,7 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
 {
     var result = new List<List<long>>();
 
-    var unmappedSeeds = seeds.Select(x => x.Select(y => y).ToList()).ToList();
+    var unmappedSeeds = seeds;
 
     currentGroup.ForEach(map =>
     {
@@ -78,7 +76,7 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
                 nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
             }
         });
-        unmappedSeeds = nextUnmappedSeeds.Select(x => x.Select(y => y).ToList()).ToList();
+        unmappedSeeds = nextUnmappedSeeds;
     });
 
     result.AddRange(unmappedSeeds);
@@ -137,7 +135,7 @@ Mapping ParseMapping(string line)
 
 List<long> HandleGroup(List<Mapping> currentGroup, List<long> seeds)
 {
-    var result = seeds.Select(x => x).ToList();
+    var result = seeds.ToList();
     currentGroup.ForEach(map =>
     {
         for (int i = 0; i < seeds.Count; i++)
