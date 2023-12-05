@@ -1,7 +1,7 @@
 ﻿using System.Data;
 
 var lines = File.ReadAllLines("TextFile1.txt");
-var result = First(lines);
+var result = Second(lines);
 Console.WriteLine(result);
 
 long Second(string[] lines)
@@ -25,16 +25,65 @@ long Second(string[] lines)
 
 List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds)
 {
-    var result = seeds.Select(x => x.Select(y => y).ToList()).ToList();
+    var result = new List<List<long>>();
+
+    var unmappedSeeds = seeds.Select(x => x.Select(y => y).ToList()).ToList();
+
     currentGroup.ForEach(map =>
     {
-        for (int i = 0; i < seeds.Count; i++)
+        var nextUnmappedSeeds = new List<List<long>>();
+        unmappedSeeds.ForEach(unmappedSeed =>
         {
-            var a = seeds[i].First();
-            var b = seeds[i].First() + seeds[i].Last();
-        }
+            var a = unmappedSeed.First();
+            var b = unmappedSeed.First() + unmappedSeed.Last();
+
+            var sourceA = map.Source;
+            var sourceB = map.Source + map.Range;
+
+            if (sourceA > b || a > sourceB)
+            {
+                // no intersection
+                nextUnmappedSeeds.Add(unmappedSeed);
+            }
+            else if (sourceA > a && sourceB >= b)
+            {
+                result.Add(new long[] { map.Dest, b - sourceA }.ToList());
+                nextUnmappedSeeds.Add(new long[] { a, sourceA - a  }.ToList());
+            }
+            else if (sourceA <= a && sourceB < b)
+            {
+                result.Add(new long[] { a, sourceB - a }.ToList());
+                nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
+            }
+            else if (sourceA <= a && b <= sourceB)
+            {
+                result.Add(new long[] { a + (map.Dest - map.Source), b - a }.ToList());
+            }
+            else if (a < sourceA && sourceB < b)
+            {
+                // 3 parts
+                result.Add(new long[] { map.Dest,sourceB- sourceA }.ToList());
+                nextUnmappedSeeds.Add(new long[] { a, sourceA - a }.ToList());
+                nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
+            }
+        });
+        unmappedSeeds = nextUnmappedSeeds.Select(x => x.Select(y => y).ToList()).ToList();
     });
+
+    result.AddRange(unmappedSeeds);
+
     return result;
+}
+
+bool Intersects(List<long> seed, Mapping map)
+{
+    var a = seed.First();
+    var b = seed.First() + seed.Last();
+
+    var sourceA = map.Source;
+    var sourceB = map.Source + map.Range;
+
+    return !(sourceA > b || a > sourceB);
 }
 
 long First(string[] lines)
@@ -62,7 +111,8 @@ List<List<Mapping>> Prepare(string[] lines)
     {
         if (line.Contains("-to-"))
         {
-            result.Add(currentGroup);
+            if (currentGroup.Any())
+                result.Add(currentGroup);
             currentGroup = new List<Mapping>();
         }
         else
