@@ -47,22 +47,33 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
             }
             else if (sourceA > a && sourceB >= b)
             {
+                // 01234567
+                // a     b
+                //   source
                 result.Add(new long[] { map.Dest, b - sourceA }.ToList());
                 nextUnmappedSeeds.Add(new long[] { a, sourceA - a  }.ToList());
             }
             else if (sourceA <= a && sourceB < b)
             {
-                result.Add(new long[] { a, sourceB - a }.ToList());
+                //   01234567
+                //   a      b
+                //   source
+                result.Add(new long[] { a + (map.Dest - map.Source), sourceB - a }.ToList());
                 nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
             }
             else if (sourceA <= a && b <= sourceB)
             {
+                //   01234567
+                //    a  b
+                //   source
                 result.Add(new long[] { a + (map.Dest - map.Source), b - a }.ToList());
             }
             else if (a < sourceA && sourceB < b)
             {
-                // 3 parts
-                result.Add(new long[] { map.Dest,sourceB- sourceA }.ToList());
+                //    0123456789 11
+                //    a          b
+                //       source
+                result.Add(new long[] { map.Dest, sourceB - sourceA }.ToList());
                 nextUnmappedSeeds.Add(new long[] { a, sourceA - a }.ToList());
                 nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
             }
