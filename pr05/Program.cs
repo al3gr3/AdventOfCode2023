@@ -35,10 +35,10 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
         unmappedSeeds.ForEach(unmappedSeed =>
         {
             var a = unmappedSeed.First();
-            var b = unmappedSeed.First() + unmappedSeed.Last();
+            var b = unmappedSeed.First() + unmappedSeed.Last() - 1;
 
             var sourceA = map.Source;
-            var sourceB = map.Source + map.Range;
+            var sourceB = map.Source + map.Range - 1;
 
             if (sourceA > b || a > sourceB)
             {
@@ -50,7 +50,7 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
                 // 01234567
                 // a     b
                 //   source
-                result.Add(new long[] { map.Dest, b - sourceA }.ToList());
+                result.Add(new long[] { map.Dest, b - sourceA + 1 }.ToList());
                 nextUnmappedSeeds.Add(new long[] { a, sourceA - a  }.ToList());
             }
             else if (sourceA <= a && sourceB < b)
@@ -58,7 +58,7 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
                 //   01234567
                 //   a      b
                 //   source
-                result.Add(new long[] { a + (map.Dest - map.Source), sourceB - a }.ToList());
+                result.Add(new long[] { a + (map.Dest - map.Source), sourceB - a + 1 }.ToList());
                 nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
             }
             else if (sourceA <= a && b <= sourceB)
@@ -66,14 +66,14 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
                 //   01234567
                 //    a  b
                 //   source
-                result.Add(new long[] { a + (map.Dest - map.Source), b - a }.ToList());
+                result.Add(new long[] { a + (map.Dest - map.Source), b - a + 1 }.ToList());
             }
             else if (a < sourceA && sourceB < b)
             {
                 //    0123456789 11
                 //    a          b
                 //       source
-                result.Add(new long[] { map.Dest, sourceB - sourceA }.ToList());
+                result.Add(new long[] { map.Dest, sourceB - sourceA + 1 }.ToList());
                 nextUnmappedSeeds.Add(new long[] { a, sourceA - a }.ToList());
                 nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
             }
