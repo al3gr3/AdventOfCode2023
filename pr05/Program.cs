@@ -1,7 +1,7 @@
 ﻿using System.Data;
 
 var lines = File.ReadAllLines("TextFile1.txt");
-var result = Second(lines);
+var result = First(lines);
 Console.WriteLine(result);
 
 long Second(string[] lines)
@@ -58,7 +58,7 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
                 //   01234567
                 //   a      b
                 //   source
-                result.Add(new long[] { a + (map.Dest - map.Source), sourceB - a + 1 }.ToList());
+                result.Add(new long[] { a + map.Offset, sourceB - a + 1 }.ToList());
                 nextUnmappedSeeds.Add(new long[] { sourceB + 1, b - sourceB }.ToList());
             }
             else if (sourceA <= a && b <= sourceB)
@@ -66,7 +66,7 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
                 //   01234567
                 //    a  b
                 //   source
-                result.Add(new long[] { a + (map.Dest - map.Source), b - a + 1 }.ToList());
+                result.Add(new long[] { a + map.Offset, b - a + 1 }.ToList());
             }
             else if (a < sourceA && sourceB < b)
             {
@@ -84,17 +84,6 @@ List<List<long>> HandleGroup2(List<Mapping> currentGroup, List<List<long>> seeds
     result.AddRange(unmappedSeeds);
 
     return result;
-}
-
-bool Intersects(List<long> seed, Mapping map)
-{
-    var a = seed.First();
-    var b = seed.First() + seed.Last();
-
-    var sourceA = map.Source;
-    var sourceB = map.Source + map.Range;
-
-    return !(sourceA > b || a > sourceB);
 }
 
 long First(string[] lines)
@@ -153,8 +142,8 @@ List<long> HandleGroup(List<Mapping> currentGroup, List<long> seeds)
     {
         for (int i = 0; i < seeds.Count; i++)
         {
-            if (map.Source <= seeds[i] && seeds[i] <= map.Source + map.Range)
-                result[i] = seeds[i] + (map.Dest - map.Source); 
+            if (map.Source <= seeds[i] && seeds[i] <= map.Source + map.Range - 1)
+                result[i] = seeds[i] + map.Offset; 
         }
     });
     return result;
@@ -165,4 +154,6 @@ class Mapping
     internal long Dest;
     internal long Source;
     internal long Range;
+
+    internal long Offset => Dest - Source;
 }
