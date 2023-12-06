@@ -1,13 +1,10 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
-var result = First(lines);
+
+var result = Second(lines);
 Console.WriteLine(result);
 
 long First(string[] lines)
 {
-    /*
-Time:      7  15   30
-Distance:  9  40  200     
-     */
     var times = lines
         .First()
         .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
@@ -24,13 +21,34 @@ Distance:  9  40  200
 
     var tds = times.Zip(distances);
 
-    var result = tds.Select(td =>
-    {
-        var records = Enumerable.Range(1, td.First - 1)
-            .Select(t => t * (td.First - t))
-            .Where(d => d > td.Second);
-        return records.Count();
-    }).Aggregate(1, (s, n) => s *= n);
+    var result = tds
+        .Select(td => CountWays(td.First, td.Second))
+        .Aggregate(1L, (s, n) => s *= n);
     return result;
+}
 
+long Second(string[] lines)
+{
+    var time = long.Parse(string.Join("",
+        lines
+            .First()
+            .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
+            .Skip(1)));
+
+    var distance = long.Parse(string.Join("",
+        lines
+            .Last()
+            .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
+            .Skip(1)));
+
+    return CountWays(time, distance);
+}
+
+long CountWays(long time, long distance)
+{
+    var result = 0;
+    for (long t = 1; t < time; t++)
+        if (t * (time - t) > distance)
+            result++;
+    return result;
 }
