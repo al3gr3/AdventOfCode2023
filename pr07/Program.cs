@@ -9,7 +9,7 @@ var inputBids = lines.Select(line =>
         Original = splits.First(),
         Amount = int.Parse(splits.Last())
     };
-}).ToList(); // if not for this, MakeStrongestPossible does not alter the hand!!!!!
+}).ToList(); // if not for this, MakeStrongestPossible does not alter Hand!!!!!
 
 var ordered = Second(inputBids);
 var result = ordered
@@ -18,14 +18,14 @@ var result = ordered
 Console.WriteLine(result);
 
 IList<Bid> First(IEnumerable<Bid> bids) =>
-    bids.Order(Comparer<Bid>.Create((a, b) => a.Compare(b))).ToList();
+    bids.Order(Comparer<Bid>.Create((a, b) => a.Compare(b, "23456789TJQKA"))).ToList();
 
 IList<Bid> Second(IEnumerable<Bid> bids)
 {
     foreach (var bid in bids)
         bid.MakeStrongestPossible();
     var ordered = bids
-        .Order(Comparer<Bid>.Create((a, b) => a.CompareSecond(b))).ToList();
+        .Order(Comparer<Bid>.Create((a, b) => a.Compare(b, "J23456789TQKA"))).ToList();
     return ordered;
 }
 
@@ -72,37 +72,16 @@ internal class Bid
         return result;
     }
 
-    internal int Compare(Bid b)
+    internal int Compare(Bid b, string cardsOrder)
     {
         var result = this.Type() - b.Type();
 
         if (result != 0)
             return result;
 
-        var cards = "23456789TJQKA";
-
-        foreach(var p in this.Hand.Zip(b.Hand))
+        foreach(var p in this.Original.Zip(b.Original))
         {
-            result = cards.IndexOf(p.First) - cards.IndexOf(p.Second);
-            if (result != 0)
-                return result;
-        }
-
-        return 0;
-    }
-
-    internal int CompareSecond(Bid b)
-    {
-        var result = this.Type() - b.Type();
-
-        if (result != 0)
-            return result;
-
-        var cards = "J23456789TQKA";
-
-        foreach (var p in this.Original.Zip(b.Original))
-        {
-            result = cards.IndexOf(p.First) - cards.IndexOf(p.Second);
+            result = cardsOrder.IndexOf(p.First) - cardsOrder.IndexOf(p.Second);
             if (result != 0)
                 return result;
         }
@@ -116,7 +95,7 @@ internal class Bid
         {
             Hand = this.Original.Replace('J', c),
             Original = this.Original,
-        }).Order(Comparer<Bid>.Create((a, b) => a.CompareSecond(b))).ToList();
+        }).Order(Comparer<Bid>.Create((a, b) => a.Compare(b, "J23456789TQKA"))).ToList();
         var best = possibilities.Last();
 
         this.Hand = best.Hand;
