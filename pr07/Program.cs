@@ -1,31 +1,38 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
 
-var result = First(lines);
+var inputBids = lines.Select(line =>
+{
+    var splits = line.Split(' ');
+    return new Bid
+    {
+        Hand = splits.First(),
+        Original = splits.First(),
+        Amount = int.Parse(splits.Last())
+    };
+});
+
+var ordered = Second(inputBids);
+var result = ordered
+    .Select((x, i) => x.Amount * (i + 1))
+    .Sum();
 Console.WriteLine(result);
 
-long First(string[] lines)
-{
-    var bids = lines.Select(line =>
-    {
-        var splits = line.Split(' ');
-        return new Bid
-        {
-            Hand = splits.First(),
-            Amount = int.Parse(splits.Last())
-        };
-    });
+IList<Bid> First(IEnumerable<Bid> bids) =>
+    bids.Order(Comparer<Bid>.Create((a, b) => a.Compare(b))).ToList();
 
+IList<Bid> Second(IEnumerable<Bid> bids)
+{
+    foreach (var bid in bids)
+        bid.MakeStrongestPossible();
     var ordered = bids
-        .Order(Comparer<Bid>.Create((a, b) => a.Compare(b)));
-    var result = ordered
-        .Select((x, i) => x.Amount * (i + 1))
-        .Sum();
-    return result; 
+        .Order(Comparer<Bid>.Create((a, b) => a.CompareSecond(b))).ToList();
+    return ordered;
 }
 
 internal class Bid
 {
     public string Hand { get; set; }
+    public string Original { get; set; }
     public int Amount { get; set; }
 
     public int Type()
@@ -70,7 +77,7 @@ internal class Bid
         if (result != 0)
             return result;
 
-        var cards = string.Join("", "AKQJT98765432".Reverse());
+        var cards = "23456789TJQKA";
 
         foreach(var p in this.Hand.Zip(b.Hand))
         {
@@ -80,5 +87,36 @@ internal class Bid
         }
 
         return 0;
+    }
+
+    internal int CompareSecond(Bid b)
+    {
+        var result = this.Type() - b.Type();
+
+        if (result != 0)
+            return result;
+
+        var cards = "J23456789TQKA";
+
+        foreach (var p in this.Original.Zip(b.Original))
+        {
+            result = cards.IndexOf(p.First) - cards.IndexOf(p.Second);
+            if (result != 0)
+                return result;
+        }
+
+        return 0;
+    }
+
+    internal void MakeStrongestPossible()
+    {
+        var possibilities = "23456789TQKA".Select(c => new Bid
+        {
+            Hand = this.Original.Replace('J', c),
+            Original = this.Original,
+        }).Order(Comparer<Bid>.Create((a, b) => a.CompareSecond(b))).ToList();
+        var best = possibilities.Last();
+
+        this.Hand = best.Hand;
     }
 }
