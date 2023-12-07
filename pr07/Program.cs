@@ -9,7 +9,7 @@ var inputBids = lines.Select(line =>
         Original = splits.First(),
         Amount = int.Parse(splits.Last())
     };
-});
+}).ToList(); // if not for this, MakeStrongestPossible does not alter the hand!!!!!
 
 var ordered = Second(inputBids);
 var result = ordered
