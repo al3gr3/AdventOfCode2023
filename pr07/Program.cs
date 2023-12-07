@@ -50,6 +50,7 @@ internal class Bid
         var amounts = Hand.GroupBy(c => c).Select(grp => grp.Count()).ToArray();
 
         var result = amounts.Max();
+
         if (result == 2)
             if (amounts.Count(x => x == 2) == 2)
                 return 3;
@@ -61,6 +62,7 @@ internal class Bid
             else
                 return 4;
         }
+
         if (result == 4)
             return 6;
 
