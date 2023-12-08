@@ -14,17 +14,17 @@ foreach (var line in lines.Skip(2))
 var result = Second(dict, lines.First());
 Console.WriteLine(result);
 
-long First(Dictionary<string, Node> dict, string path) =>
+int First(Dictionary<string, Node> dict, string path) =>
     CountCycle(dict, path, "AAA", "ZZZ");
 
 long Second(Dictionary<string, Node> dict, string path)
 {
     var current = dict.Keys.Where(x => x.EndsWith("A")).ToList();
-    var cycles = current.Select(x => CountCycle(dict, path, x, "Z"));
+    var cycles = current.Select(x => (long)CountCycle(dict, path, x, "Z"));
     return cycles.Aggregate((s, n) => s = LCM(s, n));
 }
 
-long CountCycle(Dictionary<string, Node> dict, string path, string current, string finish)
+int CountCycle(Dictionary<string, Node> dict, string path, string current, string finish)
 {
     var result = 0;
     while (!current.EndsWith(finish))
@@ -43,8 +43,6 @@ long LCM(long a, long b) => a * b / GCD(a, b);
 
 long GCD(long a, long b)
 {
-    (a, b) = (Math.Min(a, b), Math.Max(a, b));
-
     while (b != 0)
         (a, b) = (b, a % b);
 
