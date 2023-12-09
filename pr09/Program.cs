@@ -26,10 +26,8 @@ List<List<int>> CreateLines(List<int> line)
     return all;
 }
 
-int SolveSecond(List<int> line)
-{
-    var all = CreateLines(line);
-    all.Reverse();
-    var result = all.Aggregate(0, (s, n) => s = n.First() - s);
-    return result;
-}
+int SolveSecond(List<int> line) =>
+    CreateLines(line)
+    .AsEnumerable() // needed for LINQ reverse
+    .Reverse()
+    .Aggregate(0, (s, n) => s = n.First() - s);
