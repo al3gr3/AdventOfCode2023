@@ -3,9 +3,11 @@
 
 Console.WriteLine(First(lines));
 Console.WriteLine(Second(lines));
+Console.WriteLine(Second2(lines));
 
 int First(List<List<int>> lines) => lines.Select(x => Solve(x)).Sum();
 int Second(List<List<int>> lines) => lines.Select(x => SolveSecond(x)).Sum();
+int Second2(List<List<int>> lines) => lines.Select(x => Solve(x.AsEnumerable().Reverse().ToList())).Sum(); // from reddit
 
 int Solve(List<int> line) => CreateLines(line).Select(x => x.Last()).Sum();
 
