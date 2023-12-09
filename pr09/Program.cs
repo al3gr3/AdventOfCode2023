@@ -1,19 +1,13 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt")
     .Select(line => line.Split(' ').Select(x => int.Parse(x)).ToList()).ToList();
 
-var result = Second(lines);
-Console.WriteLine(result);
+Console.WriteLine(First(lines));
+Console.WriteLine(Second(lines));
 
 int First(List<List<int>> lines) => lines.Select(x => Solve(x)).Sum();
 int Second(List<List<int>> lines) => lines.Select(x => SolveSecond(x)).Sum();
 
-int Solve(List<int> line)
-{
-    var all = CreateLines(line);
-
-    var result = all.Select(x => x.Last()).Sum();
-    return result;
-}
+int Solve(List<int> line) => CreateLines(line).Select(x => x.Last()).Sum();
 
 List<List<int>> CreateLines(List<int> line)
 {
@@ -23,9 +17,7 @@ List<List<int>> CreateLines(List<int> line)
 
     while (!current.All(x => x == 0))
     {
-        var next = new List<int>();
-        for (int i = 1; i < current.Count; i++)
-            next.Add(current[i] - current[i - 1]);
+        var next = current.Skip(1).Zip(current).Select(p => p.First - p.Second).ToList();
 
         all.Add(next);
         current = next;
@@ -41,4 +33,3 @@ int SolveSecond(List<int> line)
     var result = all.Aggregate(0, (s, n) => s = n.First() - s);
     return result;
 }
-
