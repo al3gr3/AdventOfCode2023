@@ -9,6 +9,10 @@ int Second(List<List<int>> lines) => lines.Select(x => SolveSecond(x)).Sum();
 
 int Solve(List<int> line) => CreateLines(line).Select(x => x.Last()).Sum();
 
+int SolveSecond(List<int> line) => CreateLines(line)
+    .AsEnumerable().Reverse() // needed for LINQ reverse
+    .Aggregate(0, (s, n) => s = n.First() - s);
+
 List<List<int>> CreateLines(List<int> line)
 {
     var current = line;
@@ -25,9 +29,3 @@ List<List<int>> CreateLines(List<int> line)
 
     return all;
 }
-
-int SolveSecond(List<int> line) =>
-    CreateLines(line)
-    .AsEnumerable() // needed for LINQ reverse
-    .Reverse()
-    .Aggregate(0, (s, n) => s = n.First() - s);
