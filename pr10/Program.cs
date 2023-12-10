@@ -55,33 +55,15 @@ int First(string[] lines)
     //lines[s.Y] = lines[s.Y].Replace('S', 'F');
     lines[s.Y] = lines[s.Y].Replace('S', '|');
 
-    var directions = new[]
-    {
-        new Point{ X = 0, Y = 1 },
-        new Point{ X = 0, Y = -1 },
-        new Point{ X = 1, Y = 0 },
-        new Point{ X = -1, Y = 0 },
-    }.ToList();
-
     while (queue.Count > 0)
     {
         var current = queue.Dequeue();
         var c = lines[current.Y][current.X];
-        foreach (var direction in directions) 
+        foreach (var move in moves.Where(move => move.Symbol == c))
         {
-            foreach (var move in moves.Where(move => move.Symbol == c && move.Dir1.IsEqual(direction)))
+            var nexts = new[] { current.Clone().Add(move.Dir1), current.Clone().Add(move.Dir2) };
+            foreach (var next in nexts)
             {
-                var next = current.Clone().Add(move.Dir1);
-                if (distances[next.Y][next.X] > (distances[current.Y][current.X] + 1))
-                {
-                    distances[next.Y][next.X] = (distances[current.Y][current.X] + 1);
-                    queue.Enqueue(next);
-                }
-            }
-
-            foreach (var move in moves.Where(move => move.Symbol == c && move.Dir2.IsEqual(direction)))
-            {
-                var next = current.Clone().Add(move.Dir2);
                 if (distances[next.Y][next.X] > (distances[current.Y][current.X] + 1))
                 {
                     distances[next.Y][next.X] = (distances[current.Y][current.X] + 1);
