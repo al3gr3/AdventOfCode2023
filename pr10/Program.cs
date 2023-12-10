@@ -1,7 +1,7 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
 const int INFINITY = 1000000000;
-Console.WriteLine(First(lines));
-//Console.WriteLine(Second(lines));
+//Console.WriteLine(First(lines));
+Console.WriteLine(Second(lines));
 
 int[][] CalculateDistances(string[] lines)
 {
@@ -55,17 +55,13 @@ int[][] CalculateDistances(string[] lines)
     queue.Enqueue(s);
     lines[s.Y] = lines[s.Y].Replace('S', '|');
 
-    var isFirst = true;
     while (queue.Count > 0)
     {
         var current = queue.Dequeue();
         var c = lines[current.Y][current.X];
         foreach (var move in moves.Where(move => move.Symbol == c))
         {
-            var nexts = isFirst
-                ? new[] { current.Clone().Add(move.Dir1) }
-                : new[] { current.Clone().Add(move.Dir1), current.Clone().Add(move.Dir2) };
-            isFirst = false;
+            var nexts = new[] { current.Clone().Add(move.Dir1), current.Clone().Add(move.Dir2) };
             foreach (var next in nexts)
             {
                 if (distances[next.Y][next.X] > (distances[current.Y][current.X] + 1))
@@ -96,14 +92,12 @@ int First(string[] lines)
 {
     var distances = CalculateDistances(lines);
     var max = distances.SelectMany(x => x).Where(x => x != INFINITY).Max();
-    return (max + 1) / 2;
+    return max;
 }
 
 int Second(string[] lines)
 {
     var distances = CalculateDistances(lines);
-
-    var max = distances.SelectMany(x => x).Where(x => x != INFINITY).Max();
 
     var result = 0;
     for (int i = 1; i < distances.Length - 1; i++)
@@ -113,20 +107,17 @@ int Second(string[] lines)
             if (distances[i][j] != INFINITY)
                 continue;
 
-            // https://en.wikipedia.org/wiki/Nonzero-rule
-            var windings = 0; 
+            var crossings = 0; 
             for (int ray = j; ray < distances[i].Length; ray++)
             {
                 if (distances[i][ray] != INFINITY)
                 {
-                    if (distances[i + 1][ray] == (distances[i][ray] + 1) || (distances[i + 1][ray], distances[i][ray]) == (0, max))
-                        windings++;
-                    if (distances[i + 1][ray] == (distances[i][ray] - 1) || (distances[i + 1][ray], distances[i][ray]) == (max, 0))
-                        windings--;
+                    if ("|F7".Contains(lines[i][ray]))
+                        crossings++;
                 }
             }
 
-            if (windings != 0)
+            if (crossings % 2 == 1)
                 result++;
         }
     }
