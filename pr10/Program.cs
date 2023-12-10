@@ -1,7 +1,7 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
 const int INFINITY = 1000000000;
-Console.WriteLine(First(lines));
-//Console.WriteLine(Second(lines));
+//Console.WriteLine(First(lines));
+Console.WriteLine(Second(lines));
 
 int[][] CalculateDistances(string[] lines)
 {
@@ -53,7 +53,7 @@ int[][] CalculateDistances(string[] lines)
     distances[s.Y][s.X] = 0;
     var queue = new Queue<Point>();
     queue.Enqueue(s);
-    //lines[s.Y] = lines[s.Y].Replace('S', 'F');
+    //lines[s.Y] = lines[s.Y].Replace('S', '7');
     lines[s.Y] = lines[s.Y].Replace('S', '|');
 
     var isFirst = true;
@@ -105,6 +105,8 @@ int Second(string[] lines)
 {
     var distances = CalculateDistances(lines);
 
+    var max = distances.SelectMany(x => x).Where(x => x != INFINITY).Max();
+
     var result = 0;
     for (int i = 1; i < distances.Length - 1; i++)
     {
@@ -119,9 +121,9 @@ int Second(string[] lines)
             {
                 if (distances[i][ray] != INFINITY)
                 {
-                    if (distances[i + 1][ray] == (distances[i][ray] + 1))
+                    if (distances[i + 1][ray] == (distances[i][ray] + 1) || (distances[i + 1][ray], distances[i][ray]) == (0, max))
                         windings++;
-                    if (distances[i + 1][ray] == (distances[i][ray] - 1))
+                    if (distances[i + 1][ray] == (distances[i][ray] - 1) || (distances[i + 1][ray], distances[i][ray]) == (max, 0))
                         windings--;
                 }
             }
