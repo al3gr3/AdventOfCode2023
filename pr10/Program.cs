@@ -55,20 +55,18 @@ int[][] CalculateDistances(string[] lines)
     queue.Enqueue(s);
     lines[s.Y] = lines[s.Y].Replace('S', '|');
 
-    while (queue.Count > 0)
+    while (queue.Any())
     {
         var current = queue.Dequeue();
         var c = lines[current.Y][current.X];
-        foreach (var move in moves.Where(move => move.Symbol == c))
+        var move = moves.First(m => m.Symbol == c);
+        var nexts = new[] { current.Clone().Add(move.Dir1), current.Clone().Add(move.Dir2) };
+        foreach (var next in nexts)
         {
-            var nexts = new[] { current.Clone().Add(move.Dir1), current.Clone().Add(move.Dir2) };
-            foreach (var next in nexts)
+            if (distances[next.Y][next.X] > (distances[current.Y][current.X] + 1))
             {
-                if (distances[next.Y][next.X] > (distances[current.Y][current.X] + 1))
-                {
-                    distances[next.Y][next.X] = (distances[current.Y][current.X] + 1);
-                    queue.Enqueue(next);
-                }
+                distances[next.Y][next.X] = (distances[current.Y][current.X] + 1);
+                queue.Enqueue(next);
             }
         }
     }
@@ -101,7 +99,6 @@ int Second(string[] lines)
 
     var result = 0;
     for (int i = 1; i < distances.Length - 1; i++)
-    {
         for (int j = 1; j < distances[i].Length - 1; j++)
         {
             if (distances[i][j] != INFINITY)
@@ -109,18 +106,14 @@ int Second(string[] lines)
 
             var crossings = 0; 
             for (int ray = j; ray < distances[i].Length; ray++)
-            {
                 if (distances[i][ray] != INFINITY)
-                {
-                    if ("|F7".Contains(lines[i][ray]))
+                    if ("|F7".Contains(lines[i][ray])) // "|JL" is also possible
                         crossings++;
-                }
-            }
 
             if (crossings % 2 == 1)
                 result++;
         }
-    }
+
     return result;
 }
 
