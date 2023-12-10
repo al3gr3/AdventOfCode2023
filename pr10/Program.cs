@@ -104,11 +104,11 @@ int Second(string[] lines)
             if (distances[i][j] != INFINITY)
                 continue;
 
-            var crossings = 0; 
-            for (int ray = j; ray < distances[i].Length; ray++)
-                if (distances[i][ray] != INFINITY)
-                    if ("|F7".Contains(lines[i][ray])) // "|JL" is also possible
-                        crossings++;
+            var crossings = Enumerable
+                .Range(j, distances[i].Length - j)
+                .Where(x => distances[i][x] != INFINITY)
+                .Where(x => "|F7".Contains(lines[i][x]))
+                .Count();
 
             if (crossings % 2 == 1)
                 result++;
