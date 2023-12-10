@@ -1,7 +1,7 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
 const int INFINITY = 1000000000;
-//Console.WriteLine(First(lines));
-Console.WriteLine(Second(lines));
+Console.WriteLine(First(lines));
+//Console.WriteLine(Second(lines));
 
 int[][] CalculateDistances(string[] lines)
 {
@@ -53,7 +53,6 @@ int[][] CalculateDistances(string[] lines)
     distances[s.Y][s.X] = 0;
     var queue = new Queue<Point>();
     queue.Enqueue(s);
-    //lines[s.Y] = lines[s.Y].Replace('S', '7');
     lines[s.Y] = lines[s.Y].Replace('S', '|');
 
     var isFirst = true;
@@ -76,7 +75,6 @@ int[][] CalculateDistances(string[] lines)
                 }
             }
         }
-        
     }
     //Print(distances);
 
@@ -97,8 +95,8 @@ void Print(int[][] distances)
 int First(string[] lines)
 {
     var distances = CalculateDistances(lines);
-
-    return distances.SelectMany(x => x).Where(x => x != INFINITY).Max();
+    var max = distances.SelectMany(x => x).Where(x => x != INFINITY).Max();
+    return (max + 1) / 2;
 }
 
 int Second(string[] lines)
