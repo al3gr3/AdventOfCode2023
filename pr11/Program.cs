@@ -1,17 +1,21 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt");
 Console.WriteLine(Second(lines, 2));
-Console.WriteLine(Second(lines, 1000000));
+Console.WriteLine(Second(lines, 1000_000));
 
 long Second(string[] lines, long age)
 {
-    var agedRows = Enumerable.Range(0, lines.Length).Where(i => !lines[i].Contains('#')).ToList();
-    var agedCols = Enumerable.Range(0, lines.First().Length).Where(i => lines.All(x => x[i] == '.')).ToList();
+    var agedRows = Enumerable.Range(0, lines.Length).ToList();
+    var agedCols = Enumerable.Range(0, lines.First().Length).ToList();
 
     var galaxies = new List<(int, int)>();
     for (int i = 0; i < lines.Length; i++)
         for (int j = 0; j < lines[i].Length; j++)
             if (lines[i][j] == '#')
+            {
+                agedRows.Remove(i);
+                agedCols.Remove(j);
                 galaxies.Add((i, j));
+            }
 
     var result = 0L;
     foreach (var g in galaxies)
