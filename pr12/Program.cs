@@ -1,14 +1,17 @@
-﻿var lines = File.ReadAllLines("TextFile1.txt");
-//Console.WriteLine(First(lines));
-var dict = new Dictionary<string, long>();
-Console.WriteLine(Second(lines));
+﻿var dict = new Dictionary<string, long>();
+
+var lines = File.ReadAllLines("TextFile1.txt");
+Console.WriteLine(First(lines));
+//Console.WriteLine(Second(lines));
 
 long First(string[] lines)
 {
     var result = 0L;
     foreach (var line in lines)
+    {
+        dict = new Dictionary<string, long>();
         result += Solve(line);
-    //var result = lines.Select(l => ).Sum();
+    }
     return result;
 }
 
@@ -23,9 +26,7 @@ long Second(string[] lines)
             + string.Join(",", Enumerable.Range(0, 5).Select(x => splits.Last()));
         dict = new Dictionary<string, long>(); 
         result += Solve(newLine);
-        Console.WriteLine(result);
     }
-    //var result = lines.Select(l => ).Sum();
     return result;
 }
 
@@ -40,10 +41,11 @@ long Solve(string l)
 
 long Recurse(string s, List<int> numbers)
 {
-    if (dict.ContainsKey("" + s.Length + "|" + numbers.Count))
-        return dict["" + s.Length + "|" + numbers.Count];
-    if (s.Count(x => x == '?' || x == '#') < numbers.Sum())
-        return 0;
+    var keyIntoDict = "" + s.Length + "|" + numbers.Count;
+    
+    if (dict.ContainsKey(keyIntoDict))
+        return dict[keyIntoDict];
+
     if (numbers.Any() && s.All(x => x == '.'))
         return 0;
 
@@ -57,7 +59,7 @@ long Recurse(string s, List<int> numbers)
 
     var result = possibilities.Sum(x => Recurse(x, numbers.Skip(1).ToList()));
 
-    dict["" + s.Length + "|" + numbers.Count] = result;
+    dict[keyIntoDict] = result;
     return result;
 }
 
