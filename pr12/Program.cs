@@ -12,8 +12,6 @@ long Second(string[] lines) => lines.Select(line =>
     return string.Join("?", Enumerable.Range(0, 5).Select(x => splits.First()))
         + ' '
         + string.Join(",", Enumerable.Range(0, 5).Select(x => splits.Last()));
-
-
 }).Sum(Solve);
 
 long Solve(string l)
@@ -51,15 +49,10 @@ long Recurse(string s, List<int> numbers)
     return result;
 }
 
-List<string> PrepareAllPosibilities(string s, int v)
-{
-    var result = new List<string>();
-    for (int i = 0; i < s.Length; i++)
-        if (CanFirstStartFrom(s, i, v))
-            result.Add(i + v + 1 < s.Length ? s.Substring(i + v + 1) : "");
-
-    return result;
-}
+IEnumerable<string> PrepareAllPosibilities(string s, int v) => Enumerable
+    .Range(0, s.Length)
+    .Where(i => CanFirstStartFrom(s, i, v))
+    .Select(i => i + v + 1 < s.Length ? s.Substring(i + v + 1) : "");
 
 bool CanFirstStartFrom(string s, int i, int v)
 {
@@ -74,5 +67,6 @@ bool CanFirstStartFrom(string s, int i, int v)
 
     if (s.IndexOf('#') > -1 && s.IndexOf('#') < i)
         return false;
+
     return true;
 }
