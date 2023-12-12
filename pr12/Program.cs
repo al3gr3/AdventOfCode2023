@@ -9,9 +9,9 @@ long First(string[] lines) => lines.Sum(Solve);
 long Second(string[] lines) => lines.Select(line =>
 {
     var splits = line.Split(' ');
-    return string.Join("?", Enumerable.Range(0, 5).Select(x => splits.First()))
+    return string.Join("?", Enumerable.Repeat(splits.First(), 5))
         + ' '
-        + string.Join(",", Enumerable.Range(0, 5).Select(x => splits.Last()));
+        + string.Join(",", Enumerable.Repeat(splits.Last(), 5));
 }).Sum(Solve);
 
 long Solve(string l)
