@@ -2,39 +2,27 @@
 
 var lines = File.ReadAllLines("TextFile1.txt");
 Console.WriteLine(First(lines));
-//Console.WriteLine(Second(lines));
+Console.WriteLine(Second(lines));
 
-long First(string[] lines)
-{
-    var result = 0L;
-    foreach (var line in lines)
-    {
-        dict = new Dictionary<string, long>();
-        result += Solve(line);
-    }
-    return result;
-}
+long First(string[] lines) => lines.Sum(Solve);
 
-long Second(string[] lines)
+long Second(string[] lines) => lines.Select(line =>
 {
-    var result = 0L;
-    foreach (var line in lines)
-    {
-        var splits = line.Split(' ');
-        var newLine = string.Join("?", Enumerable.Range(0, 5).Select(x => splits.First()))
-            + ' '
-            + string.Join(",", Enumerable.Range(0, 5).Select(x => splits.Last()));
-        dict = new Dictionary<string, long>(); 
-        result += Solve(newLine);
-    }
-    return result;
-}
+    var splits = line.Split(' ');
+    return string.Join("?", Enumerable.Range(0, 5).Select(x => splits.First()))
+        + ' '
+        + string.Join(",", Enumerable.Range(0, 5).Select(x => splits.Last()));
+
+
+}).Sum(Solve);
 
 long Solve(string l)
 {
     var splits = l.Split(' ');
     var s = splits.First();
     var numbers = splits.Last().Split(',').Select(x => int.Parse(x)).ToList();
+
+    dict = new Dictionary<string, long>();
 
     return Recurse(s, numbers);
 }
@@ -65,7 +53,6 @@ long Recurse(string s, List<int> numbers)
 
 List<string> PrepareAllPosibilities(string s, int v)
 {
-    s = s.Trim('.');
     var result = new List<string>();
     for (int i = 0; i < s.Length; i++)
         if (CanFirstStartFrom(s, i, v))
