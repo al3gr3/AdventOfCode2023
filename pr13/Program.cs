@@ -1,4 +1,4 @@
-﻿var lines = File.ReadAllLines("TextFile2.txt").ToList();
+﻿var lines = File.ReadAllLines("TextFile1.txt").ToList();
 lines.Add("");
 Console.WriteLine(First(lines));
 
@@ -16,7 +16,7 @@ long First(List<string> lines)
             set = new List<string>();
         }
         else
-            set.Add(line);
+            set.Add(line.Trim());
     }
     return result;
 }
@@ -28,10 +28,11 @@ List<string> Rotate(List<string> set) =>
 long FindHorisontal(List<string> set)
 {
     var result = 0L;
-    // look for horisontal
-    for (var i = 1; i < set.Count - 1; i++)
-        if (set.Take(i).Reverse().Zip(set.Skip(i)).TakeWhile(x => !string.IsNullOrEmpty(x.First) && !string.IsNullOrEmpty(x.Second)).All(x => x.First == x.Second))
-            result = Math.Max(i, result);
+    for (var i = 1; i < set.Count; i++)
+        if (set.Take(i).Reverse().Zip(set.Skip(i))
+            .TakeWhile(x => !string.IsNullOrEmpty(x.First) && !string.IsNullOrEmpty(x.Second))
+            .All(x => x.First == x.Second))
+            result += i;
 
     return result;
 }
