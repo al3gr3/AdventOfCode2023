@@ -30,9 +30,7 @@ long FindHorisontal(List<string> set, int numberOfErrors)
 {
     var result = 0L;
     for (var i = 1; i < set.Count; i++)
-        if (set.Take(i).Reverse().Zip(set.Skip(i))
-            .Select(NumberOfErrors)
-            .Sum() == numberOfErrors)
+        if (set.Take(i).Reverse().Zip(set.Skip(i)).Sum(NumberOfErrors) == numberOfErrors)
             result += i;
 
     return result;
