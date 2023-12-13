@@ -1,8 +1,9 @@
 ﻿var lines = File.ReadAllLines("TextFile1.txt").ToList();
 lines.Add("");
-Console.WriteLine(First(lines));
+Console.WriteLine(Solve(lines, 0));
+Console.WriteLine(Solve(lines, 1));
 
-long First(List<string> lines)
+long Solve(List<string> lines, int numberOfErrors)
 {
     var result = 0L;
     var set = new List<string>();
@@ -10,9 +11,9 @@ long First(List<string> lines)
     {
         if (string.IsNullOrEmpty(line))
         {
-            result += 100 * FindHorisontal(set);
+            result += 100 * FindHorisontal(set, numberOfErrors);
             set = Rotate(set);
-            result += FindHorisontal(set);
+            result += FindHorisontal(set, numberOfErrors);
             set = new List<string>();
         }
         else
@@ -25,14 +26,17 @@ List<string> Rotate(List<string> set) =>
     Enumerable.Range(0, set.First().Length)
         .Select(i => new string(set.Select(x => x[i]).ToArray())).ToList();
 
-long FindHorisontal(List<string> set)
+long FindHorisontal(List<string> set, int numberOfErrors)
 {
     var result = 0L;
     for (var i = 1; i < set.Count; i++)
         if (set.Take(i).Reverse().Zip(set.Skip(i))
             .TakeWhile(x => !string.IsNullOrEmpty(x.First) && !string.IsNullOrEmpty(x.Second))
-            .All(x => x.First == x.Second))
+            .Select(x => NumberOfErrors(x))
+            .Sum() == numberOfErrors)
             result += i;
 
     return result;
 }
+
+int NumberOfErrors((string First, string Second) x) => x.First.Zip(x.Second).Count(p => p.First != p.Second);
