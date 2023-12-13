@@ -22,9 +22,8 @@ long Solve(List<string> lines, int numberOfErrors)
     return result;
 }
 
-List<string> Transpose(List<string> set) =>
-    Enumerable.Range(0, set.First().Length)
-        .Select(i => new string(set.Select(x => x[i]).ToArray())).ToList();
+List<string> Transpose(List<string> set) => set.First().Select((_, i) =>
+    new string(set.Select(x => x[i]).ToArray())).ToList();
 
 long FindHorisontal(List<string> set, int numberOfErrors)
 {
