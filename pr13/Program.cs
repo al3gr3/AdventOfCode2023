@@ -12,7 +12,7 @@ long Solve(List<string> lines, int numberOfErrors)
         if (string.IsNullOrEmpty(line))
         {
             result += 100 * FindHorisontal(set, numberOfErrors);
-            set = Mirror(set);
+            set = Transpose(set);
             result += FindHorisontal(set, numberOfErrors);
             set = new List<string>();
         }
@@ -22,7 +22,7 @@ long Solve(List<string> lines, int numberOfErrors)
     return result;
 }
 
-List<string> Mirror(List<string> set) =>
+List<string> Transpose(List<string> set) =>
     Enumerable.Range(0, set.First().Length)
         .Select(i => new string(set.Select(x => x[i]).ToArray())).ToList();
 
@@ -31,7 +31,7 @@ long FindHorisontal(List<string> set, int numberOfErrors)
     var result = 0L;
     for (var i = 1; i < set.Count; i++)
         if (set.Take(i).Reverse().Zip(set.Skip(i))
-            .Select(x => NumberOfErrors(x))
+            .Select(NumberOfErrors)
             .Sum() == numberOfErrors)
             result += i;
 
