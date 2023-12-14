@@ -7,7 +7,7 @@ int First(List<string> lines) => RotateCounterClockWise(lines).Select(Tilt).Sum(
 int CalculateLine(string arg) => arg.Select((c, i) => c == 'O' ? arg.Length - i : 0).Sum();
 
 string Tilt(string arg) => string.Join("#", arg.Split('#')
-        .Select(split => new string(split.OrderByDescending(c => c).ToArray())));
+    .Select(split => new string(split.OrderByDescending(c => c).ToArray())));
 
 long Second(List<string> lines)
 {
