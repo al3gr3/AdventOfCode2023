@@ -2,23 +2,17 @@
 Console.WriteLine(First(lines));
 //Console.WriteLine(Second(lines));
 
-int First(List<string> lines)
-{
-    lines = Transpose(lines);
-
-    var result = lines.Sum(CalculateLine);
-    return result;
-}
+int First(List<string> lines) => Transpose(lines).Sum(CalculateLine);
 
 int CalculateLine(string arg)
 {
     var splits = arg.Split('#');
     var result = 0;
     var startIndex = 0;
-    foreach(var nextSplit in splits)
+    foreach(var split in splits)
     { 
-        result += Enumerable.Range(0, nextSplit.Count(x => x == 'O')).Select(x => arg.Length - startIndex - x).Sum();
-        startIndex += nextSplit.Length + 1;
+        result += Enumerable.Range(0, split.Count(c => c == 'O')).Sum(x => arg.Length - startIndex - x);
+        startIndex += split.Length + 1;
     }
     return result;
 }
