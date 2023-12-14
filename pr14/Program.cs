@@ -1,4 +1,4 @@
-﻿var lines = File.ReadAllLines("TextFile2.txt").ToList();
+﻿var lines = File.ReadAllLines("TextFile1.txt").ToList();
 Console.WriteLine(First(lines));
 Console.WriteLine(Second(lines));
 
@@ -6,19 +6,8 @@ int First(List<string> lines) => RotateCounterClockWise(lines).Select(Tilt).Sum(
 
 int CalculateLine(string arg) => arg.Select((c, i) => c == 'O' ? arg.Length - i : 0).Sum();
 
-string Tilt(string arg)
-{
-    var splits = arg.Split('#');
-    var result = "";
-    foreach (var split in splits)
-        result += new string(split.OrderByDescending(c => c).ToArray()) + "#";
-
-    var diff = result.Reverse().TakeWhile(x => x == '#').Count() - arg.Reverse().TakeWhile(x => x == '#').Count();
-    result = result.Substring(0, result.Length - diff);
-
-    //result = result.Substring(0, result.Length - 1);
-    return result;
-}
+string Tilt(string arg) => string.Join("#", arg.Split('#')
+        .Select(split => new string(split.OrderByDescending(c => c).ToArray())));
 
 long Second(List<string> lines)
 {
