@@ -11,13 +11,12 @@ string Tilt(string arg)
     var splits = arg.Split('#');
     var result = "";
     foreach (var split in splits)
-    {
-        result += new string(Enumerable.Repeat('O', split.Count(c => c == 'O')).ToArray()) +
-            new string(Enumerable.Repeat('.', split.Count(c => c == '.')).ToArray()) + "#";
-    }
+        result += new string(split.OrderByDescending(c => c).ToArray()) + "#";
 
-    var diff = result.Reverse().TakeWhile(x => x == '#').Count() -  arg.Reverse().TakeWhile(x => x == '#').Count();
+    var diff = result.Reverse().TakeWhile(x => x == '#').Count() - arg.Reverse().TakeWhile(x => x == '#').Count();
     result = result.Substring(0, result.Length - diff);
+
+    //result = result.Substring(0, result.Length - 1);
     return result;
 }
 
@@ -34,23 +33,19 @@ long Second(List<string> lines)
         if (dict.ContainsKey(key))
         {
             cycleLength = cycle - dict[key];
-            Console.WriteLine($"cycle: {cycle}, previous: {dict[key]}");
             break;
         }
 
         dict[key] = cycle++;
         lines = Cycle(lines);
-        Console.WriteLine("" + cycle + " " + lines.Sum(CalculateLine));
     }
 
-    var remains = (1000000000 - cycle) % (cycleLength);
+    var remains = (1000000000 - cycle) % cycleLength;
 
-    for (var i = 0; i < remains +1; i++)
-    {
+    for (var i = 0; i < remains; i++)
         lines = Cycle(lines);
-    }
 
-    return lines.Sum(CalculateLine);
+    return RotateCounterClockWise(lines).Sum(CalculateLine);
 }
 
 List<string> Cycle(List<string> lines)
@@ -74,17 +69,6 @@ List<string> Cycle(List<string> lines)
     lines = RotateClockWise(lines);
     lines = RotateClockWise(lines);
     return lines;
-}
-
-void Print(List<string> lines)
-{
-    for (int i = 0; i < lines.Count; i++)
-    {
-        for (int j = 0; j < lines[i].Length; j++)
-            Console.Write(""+ lines[i][j] + ' ');
-        Console.WriteLine();
-    }
-    Console.WriteLine();
 }
 
 List<string> RotateCounterClockWise(List<string> set) => set.First().Select((_, i) =>
