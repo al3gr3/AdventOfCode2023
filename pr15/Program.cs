@@ -2,16 +2,16 @@
 Console.WriteLine(First(lines));
 Console.WriteLine(Second(lines));
 
-int First(string[] lines) => lines.First().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(Hash).Sum();
+int First(string[] lines) => lines.First().Split(',').Sum(Hash);
 
 int Hash(string split) => split.Aggregate(0, (s, n) => s = (s + (byte)n) * 17 % 256);
 
 int Second(string[] lines)
 {
     var boxes = Enumerable.Range(0, 256).Select(x => new List<Entry>()).ToArray();
-    foreach (var split in lines.First().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+    foreach (var split in lines.First().Split(','))
     {
-        var parts = split.Split(new[] { "=", "-" }, StringSplitOptions.RemoveEmptyEntries);
+        var parts = split.Split(new[] { '=', '-' });
         var hash = Hash(parts.First());
         if (split.Contains('-'))
             boxes[hash].RemoveAll(x => x.Name == parts.First());
