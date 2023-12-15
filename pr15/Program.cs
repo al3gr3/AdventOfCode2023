@@ -12,28 +12,21 @@ int Second(string[] lines)
     foreach (var split in lines.First().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
     {
         var parts = split.Split(new[] { "=", "-" }, StringSplitOptions.RemoveEmptyEntries);
-        var isRemoval = split.Contains("-");
         var hash = Hash(parts.First());
-        if (isRemoval)
-        {
-            var itemToRemove = boxes[hash].FirstOrDefault(x => x.Name == parts.First());
-            if (itemToRemove != null)
-                boxes[hash].Remove(itemToRemove);
-        }
+        if (split.Contains('-'))
+            boxes[hash].RemoveAll(x => x.Name == parts.First());
         else
         {
-            var itemToAdd = boxes[hash].FirstOrDefault(x => x.Name == parts.First());
-            if (itemToAdd == null)
+            var box = boxes[hash].FirstOrDefault(x => x.Name == parts.First());
+            if (box == null)
             {
-                itemToAdd = new Entry { Name = parts.First() };
-                boxes[hash].Add(itemToAdd);
+                box = new Entry { Name = parts.First() };
+                boxes[hash].Add(box);
             }
-
-            itemToAdd.FocalLength = int.Parse(parts.Last());
+            box.FocalLength = int.Parse(parts.Last());
         }
     }
-    var result = boxes.Select((b, i) => (i + 1) * b.Select((box, index) => box.FocalLength * (index + 1)).Sum()).Sum();
-    return result;
+    return boxes.SelectMany((box, bi) => box.Select((lens, li) => lens.FocalLength * (li + 1) * (bi + 1))).Sum();
 }
 
 class Entry
