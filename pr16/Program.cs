@@ -1,15 +1,9 @@
 ﻿var lines = File.ReadAllLines("TextFile2.txt");
-Console.WriteLine(First(lines));
-Console.WriteLine(Second(lines));
 
-long First(string[] lines)
+long Solve(string[] lines, Beam initial)
 {
     var beams = new Queue<Beam>();
-    beams.Enqueue(new Beam
-    {
-        Pos = new Point { X = 0, Y = 0 },
-        Vector = new Point { X = 1, Y = 0 },
-    });
+    beams.Enqueue(initial);
 
     var light = lines.Select(l => Enumerable.Repeat(' ', l.Length).ToArray()).ToList();
 
@@ -39,9 +33,9 @@ long First(string[] lines)
                     X = beam.Vector.Y,
                     Y = beam.Vector.X
                 };
-                beams.Enqueue(new Beam 
-                { 
-                    Pos = beam.Pos.Add(newVector), 
+                beams.Enqueue(new Beam
+                {
+                    Pos = beam.Pos.Add(newVector),
                     Vector = newVector
                 });
             }
@@ -89,9 +83,84 @@ long First(string[] lines)
     return light.SelectMany(x => x).Count(x => x == '#');
 }
 
+Console.WriteLine(First(lines));
+Console.WriteLine(Second(lines));
+
+long First(string[] lines)
+{
+    var initial = new Beam
+    {
+        Pos = new Point { X = 0, Y = 0 },
+        Vector = new Point { X = 1, Y = 0 },
+    };
+    return Solve(lines, initial);
+}
+
 long Second(string[] lines)
 {
-    return 0;
+    var max = 0L;
+    for (var i = 0; i < lines.Length; i++)
+    {
+        max = Math.Max(max, Solve(lines, new Beam
+        {
+            Pos = new Point
+            { 
+                X = 0,
+                Y = i,
+            },
+            Vector = new Point
+            {
+                X = 1,
+                Y = 0
+            }
+        }));
+
+        max = Math.Max(max, Solve(lines, new Beam
+        {
+            Pos = new Point
+            {
+                X = 0,
+                Y = lines.Length - 1 - i,
+            },
+            Vector = new Point
+            {
+                X = -1,
+                Y = 0
+            }
+        }));
+    }
+
+    for (var i = 0; i < lines.First().Length; i++)
+    {
+        max = Math.Max(max, Solve(lines, new Beam
+        {
+            Pos = new Point
+            {
+                X = i,
+                Y = 0,
+            },
+            Vector = new Point
+            {
+                X = 0,
+                Y = 1
+            }
+        }));
+
+        max = Math.Max(max, Solve(lines, new Beam
+        {
+            Pos = new Point
+            {
+                X = lines.First().Length - 1 - i,
+                Y = 0,
+            },
+            Vector = new Point
+            {
+                X = -1,
+                Y = 0
+            }
+        }));
+    }
+    return max;
 }
 
 class Beam
