@@ -7,12 +7,12 @@ long Solve(string[] lines, Beam initial)
     var beams = new Queue<Beam>();
     beams.Enqueue(initial);
 
-    var light = lines.Select(l => Enumerable.Repeat(' ', l.Length).ToArray()).ToList();
+    var light = lines.Select(l => Enumerable.Repeat(0, l.Length).ToArray()).ToList();
 
-    var nr = 0;
+    var cycleNumber = 0;
     while (beams.Any())
     {
-        if (nr++ > 1_000_000)
+        if (cycleNumber++ > 1_000_000)
             break;
 
         var beam = beams.Dequeue();
@@ -20,7 +20,7 @@ long Solve(string[] lines, Beam initial)
         if (0 <= beam.Pos.X && beam.Pos.X < lines.First().Length &&
             0 <= beam.Pos.Y && beam.Pos.Y < lines.Length)
         {
-            light[beam.Pos.Y][beam.Pos.X] = '#';
+            light[beam.Pos.Y][beam.Pos.X] = 1;
 
             var c = lines[beam.Pos.Y][beam.Pos.X];
             if (c == '.')
@@ -82,7 +82,7 @@ long Solve(string[] lines, Beam initial)
             }
         }
     }
-    return light.SelectMany(x => x).Count(x => x == '#');
+    return light.SelectMany(x => x).Sum();
 }
 
 long First(string[] lines) => Solve(lines, new Beam
