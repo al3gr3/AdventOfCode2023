@@ -94,9 +94,10 @@ long First(string[] lines) => Solve(lines, new Beam
 long Second(string[] lines)
 {
     var max = 0L;
+    var beams = new List<Beam>();
     for (var i = 0; i < lines.Length; i++)
     {
-        max = Math.Max(max, Solve(lines, new Beam
+        beams.Add(new Beam
         {
             Pos = new Point
             { 
@@ -108,9 +109,9 @@ long Second(string[] lines)
                 X = 1,
                 Y = 0
             }
-        }));
+        });
 
-        max = Math.Max(max, Solve(lines, new Beam
+        beams.Add(new Beam
         {
             Pos = new Point
             {
@@ -122,12 +123,12 @@ long Second(string[] lines)
                 X = -1,
                 Y = 0
             }
-        }));
+        });
     }
 
     for (var i = 0; i < lines.First().Length; i++)
     {
-        max = Math.Max(max, Solve(lines, new Beam
+        beams.Add(new Beam
         {
             Pos = new Point
             {
@@ -139,9 +140,9 @@ long Second(string[] lines)
                 X = 0,
                 Y = 1
             }
-        }));
+        });
 
-        max = Math.Max(max, Solve(lines, new Beam
+        beams.Add(new Beam
         {
             Pos = new Point
             {
@@ -153,9 +154,9 @@ long Second(string[] lines)
                 X = -1,
                 Y = 0
             }
-        }));
+        });
     }
-    return max;
+    return beams.Max(x => Solve(lines, x));
 }
 
 class Beam
