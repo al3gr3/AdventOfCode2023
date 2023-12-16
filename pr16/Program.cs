@@ -1,4 +1,4 @@
-﻿var lines = File.ReadAllLines("TextFile1.txt");
+﻿var lines = File.ReadAllLines("TextFile2.txt");
 Console.WriteLine(First(lines));
 Console.WriteLine(Second(lines));
 
@@ -21,11 +21,11 @@ long First(string[] lines)
 
         var beam = beams.Dequeue();
 
-        light[beam.Pos.Y][beam.Pos.X] = '#';
-
         if (0 <= beam.Pos.X && beam.Pos.X < lines.First().Length &&
             0 <= beam.Pos.Y && beam.Pos.Y < lines.Length)
         {
+            light[beam.Pos.Y][beam.Pos.X] = '#';
+
             var c = lines[beam.Pos.Y][beam.Pos.X];
             if (c == '.')
             {
@@ -67,8 +67,8 @@ long First(string[] lines)
                 }
                 else
                 {
-                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X, Y = beam.Pos.Y - 1 }, Vector = { X = 0, Y = -1 } });
-                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X, Y = beam.Pos.Y + 1 }, Vector = { X = 0, Y = 1 } });
+                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X, Y = beam.Pos.Y - 1 }, Vector = new Point { X = 0, Y = -1 } });
+                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X, Y = beam.Pos.Y + 1 }, Vector = new Point { X = 0, Y = 1 } });
                 }
             }
             else if (c == '-')
@@ -80,8 +80,8 @@ long First(string[] lines)
                 }
                 else
                 {
-                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X + 1, Y = beam.Pos.Y }, Vector = { X = 1, Y = 0 } });
-                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X - 1, Y = beam.Pos.Y }, Vector = { X = -1, Y = 0 } });
+                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X + 1, Y = beam.Pos.Y }, Vector = new Point { X = 1, Y = 0 } });
+                    beams.Enqueue(new Beam { Pos = new Point { X = beam.Pos.X - 1, Y = beam.Pos.Y }, Vector = new Point { X = -1, Y = 0 } });
                 }
             }
         }
