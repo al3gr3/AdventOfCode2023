@@ -93,7 +93,6 @@ long First(string[] lines) => Solve(lines, new Beam
 
 long Second(string[] lines)
 {
-    var max = 0L;
     var beams = new List<Beam>();
     for (var i = 0; i < lines.Length; i++)
     {
