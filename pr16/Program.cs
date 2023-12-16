@@ -1,4 +1,6 @@
 ﻿var lines = File.ReadAllLines("TextFile2.txt");
+Console.WriteLine(First(lines));
+Console.WriteLine(Second(lines));
 
 long Solve(string[] lines, Beam initial)
 {
@@ -83,18 +85,11 @@ long Solve(string[] lines, Beam initial)
     return light.SelectMany(x => x).Count(x => x == '#');
 }
 
-Console.WriteLine(First(lines));
-Console.WriteLine(Second(lines));
-
-long First(string[] lines)
+long First(string[] lines) => Solve(lines, new Beam
 {
-    var initial = new Beam
-    {
-        Pos = new Point { X = 0, Y = 0 },
-        Vector = new Point { X = 1, Y = 0 },
-    };
-    return Solve(lines, initial);
-}
+    Pos = new Point { X = 0, Y = 0 },
+    Vector = new Point { X = 1, Y = 0 },
+});
 
 long Second(string[] lines)
 {
@@ -180,11 +175,4 @@ class Point
         this.Y += point.Y;
         return this;
     }
-
-    internal Point Clone()
-    {
-        return new Point { X = this.X, Y = this.Y, };
-    }
-
-    internal bool IsEqual(Point p) => (this.X, this.Y) == (p.X, p.Y);
 }
