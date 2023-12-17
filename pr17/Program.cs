@@ -6,87 +6,81 @@
     new Point { Y = -1, X = 0 },
 }.ToList();
 
-var lines = File.ReadAllLines("TextFile2.txt");
-Console.WriteLine(First(lines));
+const int INFINITY = 100000000;
 
-long First(string[] lines)
+var lines = File.ReadAllLines("TextFile1.txt");
+Console.WriteLine(Solve(lines, 1, 3));
+Console.WriteLine(Solve(lines, 4, 7));
+
+long Solve(string[] lines, int start, int length)
 {
     var height = lines.Length;
     var width = lines.First().Length;
 
-    var dist = Enumerable.Range(0, height).Select(y => Enumerable.Range(0, width).Select(x => directions.Select(d => 100000000).ToArray()).ToArray()).ToArray();
-    var queue = Enumerable.Range(0, height).SelectMany(y => Enumerable.Range(0, width).SelectMany(x => directions.Select(d =>
-        new Path 
-        { 
-            Pos = new Point { X = x, Y = y },
-            Dir = d.Clone(),
-            Heat = 100000000,
-        }))).ToList();
+    var queue = Enumerable.Range(0, height).SelectMany(y => Enumerable.Range(0, width).SelectMany(x => directions.Select(d => new Path 
+    { 
+        Pos = new Point { X = x, Y = y },
+        Dir = d.Clone(),
+        Dist = INFINITY,
+    }))).ToList();
 
-    foreach (var path in queue.Where(p => p.Pos.X == 0 && p.Pos.Y == 0))
-        path.Heat = 0;
+    foreach (var path in queue.Where(p => p.Pos.IsEqual(new Point())))
+        path.Dist = 0;
 
-    dist[0][0][0] = 0;
-    dist[0][0][1] = 0;
-    dist[0][0][2] = 0;
-    dist[0][0][3] = 0;
-
+    var result = INFINITY;
     while (queue.Any())
     {
-        var u = queue.Aggregate(queue.First(), (min, n) => min.Heat > n.Heat ? n : min);
-        if (u.Heat == 100000000)
+        var u = queue.Aggregate(queue.First(), (min, n) => min.Dist > n.Dist ? n : min);
+        if (u.Dist == INFINITY)
             break;
         queue.Remove(u);
 
-        foreach(var step in Enumerable.Range(4, 7))
-            foreach(var direction in directions.Where(x => !(x.X == u.Dir.X && x.Y == u.Dir.Y) && !(x.X == -1 * u.Dir.X && x.Y == -1 * u.Dir.Y)))
+        foreach (var step in Enumerable.Range(start, length))
+            foreach (var direction in directions.Where(x => !x.IsEqual(u.Dir) && !x.IsEqual(u.Dir.Multiply(-1))))
             {
                 var newPos = u.Clone();
-                var heat = 0;
+                var edge = 0;
                 for (var i = 1; i <= step; i++)
                 {
                     newPos.Pos.Add(newPos.Dir);
                     if (0 <= newPos.Pos.X && newPos.Pos.X < width &&
                         0 <= newPos.Pos.Y && newPos.Pos.Y < height)
-                        heat += int.Parse("" + lines[newPos.Pos.Y][newPos.Pos.X]);
+                        edge += int.Parse("" + lines[newPos.Pos.Y][newPos.Pos.X]);
+                    else
+                        goto stop;
                 }
 
                 newPos.Dir = direction.Clone();
 
-                if (0 <= newPos.Pos.X && newPos.Pos.X < width &&
-                    0 <= newPos.Pos.Y && newPos.Pos.Y < height)
-                {
-                    var v = queue.FirstOrDefault(x => x.Pos.IsEqual(newPos.Pos) && x.Dir.IsEqual(newPos.Dir));
-                    if (v == null)
-                        break;
+                var v = queue.FirstOrDefault(x => x.Pos.IsEqual(newPos.Pos) && x.Dir.IsEqual(newPos.Dir));
+                if (v == null)
+                    break;
 
-                    var alt = dist[u.Pos.Y][u.Pos.X][directions.FindIndex(x => x.IsEqual(u.Dir))] + heat;
-                    if (alt < dist[v.Pos.Y][v.Pos.X][directions.FindIndex(x => x.IsEqual(v.Dir))])
-                    {
-                        dist[v.Pos.Y][v.Pos.X][directions.FindIndex(x => x.IsEqual(v.Dir))] = alt;
-                        v.Heat = alt;
-                    }
-                }
+                var alt = u.Dist + edge;
+                if (alt < v.Dist)
+                    v.Dist = alt;
+
+                if (v.Pos.IsEqual(new Point { X = width - 1, Y = height - 1 }))
+                    result = Math.Min(result, v.Dist);
             }
-        Console.WriteLine(queue.Count);
+        stop:;
+        //Console.WriteLine(queue.Count);
     }
 
-    var result = Enumerable.Range(0, 4).Select(x => dist[height - 1][width - 1][x]).Min();
     return result;
 }
-
 
 class Path
 {
     internal Point Pos;
     internal Point Dir;
-    internal int Heat;
+    internal int Dist;
 
     internal Path Clone() => new Path
     {
         Pos = Pos.Clone(),
         Dir = Dir.Clone(),
-        Heat = Heat,
+        Dist = Dist,
     };
 }
 
@@ -101,10 +95,9 @@ class Point
         this.Y += point.Y;
     }
 
-    internal Point Clone()
-    {
-        return new Point { X = this.X, Y = this.Y };
-    }
+    internal Point Clone() => new Point { X = this.X, Y = this.Y };
 
     internal bool IsEqual(Point other) => this.X == other.X && this.Y == other.Y;
+
+    internal Point Multiply(int i) => new Point { X = this.X * i, Y = this.Y * i };
 }
