@@ -38,7 +38,7 @@ long First(string[] lines)
             break;
         queue.Remove(u);
 
-        foreach(var step in Enumerable.Range(1, 3))
+        foreach(var step in Enumerable.Range(4, 7))
             foreach(var direction in directions.Where(x => !(x.X == u.Dir.X && x.Y == u.Dir.Y) && !(x.X == -1 * u.Dir.X && x.Y == -1 * u.Dir.Y)))
             {
                 var newPos = u.Clone();
