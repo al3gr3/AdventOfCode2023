@@ -6,7 +6,7 @@
     new Point { Y = -1, X = 0 },
 }.ToList();
 
-var lines = File.ReadAllLines("TextFile1.txt");
+var lines = File.ReadAllLines("TextFile2.txt");
 Console.WriteLine(First(lines));
 
 long First(string[] lines)
@@ -34,10 +34,12 @@ long First(string[] lines)
     while (queue.Any())
     {
         var u = queue.Aggregate(queue.First(), (min, n) => min.Heat > n.Heat ? n : min);
+        if (u.Heat == 100000000)
+            break;
         queue.Remove(u);
 
         foreach(var step in Enumerable.Range(1, 3))
-            foreach(var direction in directions.Where(x => !(x.X == u.Pos.X && x.Y == u.Pos.Y) && !(x.X == -1 * u.Pos.X && x.Y == -1 * u.Pos.Y)))
+            foreach(var direction in directions.Where(x => !(x.X == u.Dir.X && x.Y == u.Dir.Y) && !(x.X == -1 * u.Dir.X && x.Y == -1 * u.Dir.Y)))
             {
                 var newPos = u.Clone();
                 var heat = 0;
@@ -54,7 +56,7 @@ long First(string[] lines)
                 if (0 <= newPos.Pos.X && newPos.Pos.X < width &&
                     0 <= newPos.Pos.Y && newPos.Pos.Y < height)
                 {
-                    var v = queue.FirstOrDefault(x => x.Pos.IsEqual(newPos.Pos) && x.Dir.Equals(newPos.Dir));
+                    var v = queue.FirstOrDefault(x => x.Pos.IsEqual(newPos.Pos) && x.Dir.IsEqual(newPos.Dir));
                     if (v == null)
                         break;
 
@@ -66,6 +68,7 @@ long First(string[] lines)
                     }
                 }
             }
+        Console.WriteLine(queue.Count);
     }
 
     var result = Enumerable.Range(0, 4).Select(x => dist[height - 1][width - 1][x]).Min();
