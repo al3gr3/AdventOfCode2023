@@ -36,6 +36,7 @@ long Solve(string[] lines, int start, int length)
         queue.Remove(u);
 
         foreach (var step in Enumerable.Range(start, length))
+        {
             foreach (var direction in directions.Where(x => !x.IsEqual(u.Dir) && !x.IsEqual(u.Dir.Multiply(-1))))
             {
                 var newPos = u.Clone();
@@ -50,9 +51,7 @@ long Solve(string[] lines, int start, int length)
                         goto stop;
                 }
 
-                newPos.Dir = direction.Clone();
-
-                var v = queue.FirstOrDefault(x => x.Pos.IsEqual(newPos.Pos) && x.Dir.IsEqual(newPos.Dir));
+                var v = queue.FirstOrDefault(x => x.Pos.IsEqual(newPos.Pos) && x.Dir.IsEqual(direction));
                 if (v == null)
                     break;
 
@@ -63,6 +62,7 @@ long Solve(string[] lines, int start, int length)
                 if (v.Pos.IsEqual(new Point { X = width - 1, Y = height - 1 }))
                     result = Math.Min(result, v.Dist);
             }
+        }
         stop:;
         //Console.WriteLine(queue.Count);
     }
