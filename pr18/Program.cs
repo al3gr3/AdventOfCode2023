@@ -6,9 +6,42 @@
     { "U",  new Point { Y = -1, X = 0 } },
 };
 
-Console.WriteLine(Solve(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
-Console.WriteLine(Solve(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
-//Console.WriteLine(Second(lines));
+Point ParseFirst(string line)
+{
+    var splits = line.Split(' ');
+    var d = directions[splits[0]].Clone().Multiply(int.Parse(splits[1]));
+    return d;
+}
+
+Point ParseSecond(string line)
+{
+    var splits = line.Split(' ');
+    var multiplier = Convert.ToInt64(new string(splits[2].Skip(2).Take(5).ToArray()), 16);
+    var direction = "" + "RDLU"[int.Parse("" + splits[2][7])];
+    var d = directions[direction].Clone().Multiply(multiplier);
+    return d;
+}
+
+
+//Console.WriteLine(Solve(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
+//Console.WriteLine(Solve(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
+
+Console.WriteLine(Solve2(File.ReadAllLines("TextFile2.txt")));
+
+long Solve2(string[] lines)
+{
+    var area = 0L;
+    var dy = 0L;
+    var p = 0L;
+    foreach (var line in lines)
+    {
+        var d = ParseSecond(line);
+        area += d.X * dy;
+        dy += d.Y;
+        p += Math.Abs(d.X) + Math.Abs(d.Y);
+    }
+    return Math.Abs(area) + p / 2  + 1;
+}
 
 long Solve(string[] lines, int height, int width, Point pos)
 {
@@ -17,7 +50,6 @@ long Solve(string[] lines, int height, int width, Point pos)
     var grid = Enumerable.Range(0, height).Select(x => Enumerable.Range(0, width).Select(x => 0).ToArray()).ToArray();
 
     grid[pos.Y][pos.X] = 1;
-    var result = 1;
     foreach (var line in lines)
     {
         var splits = line.Split(' ');
@@ -25,7 +57,6 @@ long Solve(string[] lines, int height, int width, Point pos)
         {
             pos.Add(directions[splits[0]]);
             grid[pos.Y][pos.X] = 1;
-            result++;
         }
     }
 
@@ -50,15 +81,10 @@ void Fill(int[][] grid, Point seed)
     }
 }
 
-long Second(string[] lines)
-{
-    return 0;
-}
-
 class Point
 {
-    internal int X;
-    internal int Y;
+    internal long X;
+    internal long Y;
 
     internal Point Add(Point point)
     {
@@ -71,5 +97,5 @@ class Point
 
     internal bool IsEqual(Point other) => this.X == other.X && this.Y == other.Y;
 
-    internal Point Multiply(int i) => new Point { X = this.X * i, Y = this.Y * i };
+    internal Point Multiply(long i) => new Point { X = this.X * i, Y = this.Y * i };
 }
