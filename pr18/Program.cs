@@ -7,13 +7,13 @@
 };
 
 
-Console.WriteLine(First(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
-Console.WriteLine(First(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
+Console.WriteLine(SolveWithFill(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
+Console.WriteLine(SolveWithFill(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
 
-Console.WriteLine(Second(File.ReadAllLines("TextFile1.txt"), ParseFirst));
-Console.WriteLine(Second(File.ReadAllLines("TextFile2.txt"), ParseFirst));
+Console.WriteLine(Smart(File.ReadAllLines("TextFile1.txt"), ParseFirst));
 
-Console.WriteLine(Second(File.ReadAllLines("TextFile2.txt"), ParseSecond));
+Console.WriteLine(Smart(File.ReadAllLines("TextFile2.txt"), ParseFirst));
+Console.WriteLine(Smart(File.ReadAllLines("TextFile2.txt"), ParseSecond));
 
 Point ParseFirst(string line)
 {
@@ -29,7 +29,7 @@ Point ParseSecond(string line)
     return directions[direction].Clone().Multiply(multiplier);
 }
 
-long Second(string[] lines, Func<string, Point> parse)
+long Smart(string[] lines, Func<string, Point> parse)
 {
     var area = 0L;
     var dy = 0L;
@@ -38,12 +38,12 @@ long Second(string[] lines, Func<string, Point> parse)
     {
         area += d.X * dy;
         dy += d.Y;
-        p += Math.Abs(d.X) + Math.Abs(d.Y);
+        p += Math.Max(0, d.X) + Math.Max(0, d.Y); // adding only for D and R
     }
-    return Math.Abs(area) + p / 2  + 1;
+    return Math.Abs(area) + p  + 1;
 }
 
-long First(string[] lines, int height, int width, Point pos)
+long SolveWithFill(string[] lines, int height, int width, Point pos)
 {
     var starting = pos.Clone();
 
