@@ -1,5 +1,4 @@
-﻿
-var directions = new Dictionary<string, Point>
+﻿var directions = new Dictionary<string, Point>
 {
     { "D", new Point { Y = 1, X = 0 } },
     { "L",  new Point { Y = 0, X = -1 } },
@@ -10,7 +9,6 @@ var directions = new Dictionary<string, Point>
 Console.WriteLine(Solve(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
 Console.WriteLine(Solve(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
 //Console.WriteLine(Second(lines));
-
 
 long Solve(string[] lines, int height, int width, Point pos)
 {
@@ -31,7 +29,6 @@ long Solve(string[] lines, int height, int width, Point pos)
         }
     }
 
-    Console.WriteLine(grid.Sum(x => x.Sum()));
     Fill(grid, starting.Add(new Point { X = 1, Y = 1 }));
 
     return grid.Sum(x => x.Sum());
@@ -45,21 +42,12 @@ void Fill(int[][] grid, Point seed)
     {
         var next = queue.Dequeue();
         grid[next.Y][next.X] = 1;
-        foreach (var p in directions.Values.Select(d => next.Clone().Add(d)).Where(p => grid[p.Y][p.X] == 0))
-            if (!queue.Any(x => x.IsEqual(p)))
-                queue.Enqueue(p);
+        foreach (var p in directions.Values
+            .Select(d => next.Clone().Add(d))
+            .Where(p => grid[p.Y][p.X] == 0)
+            .Where(p => !queue.Any(x => x.IsEqual(p))))
+            queue.Enqueue(p);
     }
-}
-
-void Print(int[][] distances)
-{
-    for (int i = 0; i < distances.Length; i++)
-    {
-        for (int j = 0; j < distances[i].Length; j++)
-            Console.Write(distances[i][j]);
-        Console.WriteLine();
-    }
-    Console.WriteLine();
 }
 
 long Second(string[] lines)
