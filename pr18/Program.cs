@@ -34,9 +34,8 @@ long Second(string[] lines, Func<string, Point> parse)
     var area = 0L;
     var dy = 0L;
     var p = 0L;
-    foreach (var line in lines)
+    foreach (var d in lines.Select(parse))
     {
-        var d = parse(line);
         area += d.X * dy;
         dy += d.Y;
         p += Math.Abs(d.X) + Math.Abs(d.Y);
