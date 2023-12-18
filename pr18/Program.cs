@@ -6,11 +6,19 @@
     { "U",  new Point { Y = -1, X = 0 } },
 };
 
+
+Console.WriteLine(First(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
+Console.WriteLine(First(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
+
+Console.WriteLine(Second(File.ReadAllLines("TextFile1.txt"), ParseFirst));
+Console.WriteLine(Second(File.ReadAllLines("TextFile2.txt"), ParseFirst));
+
+Console.WriteLine(Second(File.ReadAllLines("TextFile2.txt"), ParseSecond));
+
 Point ParseFirst(string line)
 {
     var splits = line.Split(' ');
-    var d = directions[splits[0]].Clone().Multiply(int.Parse(splits[1]));
-    return d;
+    return directions[splits[0]].Clone().Multiply(int.Parse(splits[1]));
 }
 
 Point ParseSecond(string line)
@@ -18,24 +26,17 @@ Point ParseSecond(string line)
     var splits = line.Split(' ');
     var multiplier = Convert.ToInt64(new string(splits[2].Skip(2).Take(5).ToArray()), 16);
     var direction = "" + "RDLU"[int.Parse("" + splits[2][7])];
-    var d = directions[direction].Clone().Multiply(multiplier);
-    return d;
+    return directions[direction].Clone().Multiply(multiplier);
 }
 
-
-//Console.WriteLine(Solve(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
-//Console.WriteLine(Solve(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
-
-Console.WriteLine(Solve2(File.ReadAllLines("TextFile2.txt")));
-
-long Solve2(string[] lines)
+long Second(string[] lines, Func<string, Point> parse)
 {
     var area = 0L;
     var dy = 0L;
     var p = 0L;
     foreach (var line in lines)
     {
-        var d = ParseSecond(line);
+        var d = parse(line);
         area += d.X * dy;
         dy += d.Y;
         p += Math.Abs(d.X) + Math.Abs(d.Y);
@@ -43,7 +44,7 @@ long Solve2(string[] lines)
     return Math.Abs(area) + p / 2  + 1;
 }
 
-long Solve(string[] lines, int height, int width, Point pos)
+long First(string[] lines, int height, int width, Point pos)
 {
     var starting = pos.Clone();
 
