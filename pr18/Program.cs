@@ -40,7 +40,7 @@ long Smart(string[] lines, Func<string, Point> parse)
         dy += d.Y;
         p += Math.Max(0, d.X) + Math.Max(0, d.Y); // adding only for D and R
     }
-    return Math.Abs(area) + p  + 1;
+    return Math.Abs(area) + p + 1;
 }
 
 long SolveWithFill(string[] lines, int height, int width, Point pos)
