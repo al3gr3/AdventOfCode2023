@@ -23,7 +23,6 @@ int First(string[] lines)
 
 long Second(string[] lines)
 {
-    
     var ranges = "xmas".Select(c => new Range { Start = 1, Finish = 4000, Name = "" + c }).ToList();
     var result = Recurse("in", ranges);
     return result;
@@ -46,7 +45,7 @@ long Recurse(string ruleName, List<Range> ranges, int? skip = null)
     var falseRanges = ranges.Select(x => x.Intersect(twoRanges.Item2)).ToList();
 
     var a = trueRanges.Any(x => x == null) ? 0 :  Recurse(rule.splits.Last(), trueRanges);
-    var b = falseRanges.Any(x => x == null) ? Recurse(ruleName, falseRanges, (skip ?? 0) + 1);
+    var b = falseRanges.Any(x => x == null) ? 0 :  Recurse(ruleName, falseRanges, (skip ?? 0) + 1);
 
     return a + b;
 }
