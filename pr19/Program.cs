@@ -1,11 +1,13 @@
-﻿var lines = File.ReadAllLines("TextFile2.txt");
+﻿var lines = File.ReadAllLines("TextFile1.txt");
 
 Console.WriteLine(First(lines));
+Console.WriteLine(Second(lines));
 
 int First(string[] lines)
 {
     var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
-    var result = lines.Skip(rulesets.Count + 1).Select(Xmas.Parse).Where(xmas =>
+    var xmass = lines.Skip(rulesets.Count + 1).Select(Xmas.Parse).ToList();
+    var result = xmass.Where(xmas =>
     {
         var next = "in";
 
@@ -14,6 +16,34 @@ int First(string[] lines)
 
         return next == "A";
     }).Sum(xmas => xmas.Sum());
+    return result;
+}
+
+long Second(string[] lines)
+{
+    var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
+    var all = "xmas".Select(c => Enumerable.Range(1, 4000).Select(i => "{" + c + "=" + i + "}").Select(Xmas.Parse).ToList()).ToList();
+    var result = 1L;
+    foreach (var xmass in all)
+    {
+        result *= xmass.Count(xmas =>
+        {
+            var result = true;
+            foreach (var key in rulesets.Keys)
+            {
+                var next = key;
+
+                var apply =  rulesets[next].Apply(xmas);
+                if (next == "R")
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        });
+    }
     return result;
 }
 
@@ -53,6 +83,8 @@ class Rule
     {
         if (splits.Length == 1)
             return splits[0];
+        if (!xmas.Dict.ContainsKey(splits[0]))
+            return "";
         if (Name.Contains("<") && xmas.Dict[splits[0]] < int.Parse(splits[1]))
             return splits[2];
         if (Name.Contains(">") && xmas.Dict[splits[0]] > int.Parse(splits[1]))
@@ -67,7 +99,7 @@ class RuleSet
     internal List<Rule> Rules;
     internal string Name;
 
-    internal string Apply(Xmas xmas) => Rules.Select(x => x.Apply(xmas)).First(x => x != "");
+    internal string Apply(Xmas xmas) => Rules.Select(x => x.Apply(xmas)).FirstOrDefault(x => x != "");
 
     internal static RuleSet Parse(string s)
     {
