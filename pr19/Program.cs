@@ -1,11 +1,13 @@
-﻿var lines = File.ReadAllLines("TextFile1.txt");
+﻿using System.Data.Common;
+
+var lines = File.ReadAllLines("TextFile1.txt");
+var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
 
 Console.WriteLine(First(lines));
 Console.WriteLine(Second(lines));
 
 int First(string[] lines)
 {
-    var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
     var xmass = lines.Skip(rulesets.Count + 1).Select(Xmas.Parse).ToList();
     var result = xmass.Where(xmas =>
     {
@@ -21,30 +23,48 @@ int First(string[] lines)
 
 long Second(string[] lines)
 {
-    var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
-    var all = "xmas".Select(c => Enumerable.Range(1, 4000).Select(i => "{" + c + "=" + i + "}").Select(Xmas.Parse).ToList()).ToList();
-    var result = 1L;
-    foreach (var xmass in all)
-    {
-        result *= xmass.Count(xmas =>
-        {
-            var result = true;
-            foreach (var key in rulesets.Keys)
-            {
-                var next = key;
-
-                var apply =  rulesets[next].Apply(xmas);
-                if (next == "R")
-                {
-                    result = false;
-                    break;
-                }
-            }
-
-            return result;
-        });
-    }
+    
+    var ranges = "xmas".Select(c => new Range { Start = 1, Finish = 4000, Name = "" + c }).ToList();
+    var result = Recurse("in", ranges);
     return result;
+}
+
+long Recurse(string ruleName, List<Range> ranges, int? skip = null)
+{
+    if (ruleName == "A")
+        return ranges.Select(x => x.Finish - x.Start + 1).Aggregate(1L, (s, n) => s *= n);
+
+    if (ruleName == "R")
+        return 0;
+
+    var rule = rulesets[ruleName].Rules.Skip(skip ?? 0).First();
+    if (rule.splits.Length == 1)
+        return Recurse(rule.splits[0], ranges);
+    var twoRanges = rule.TwoRanges();
+
+    var trueRanges = ranges.Select(x => x.Intersect(twoRanges.Item1)).ToList();
+    var falseRanges = ranges.Select(x => x.Intersect(twoRanges.Item2)).ToList();
+
+    var a = trueRanges.Any(x => x == null) ? 0 :  Recurse(rule.splits.Last(), trueRanges);
+    var b = falseRanges.Any(x => x == null) ? Recurse(ruleName, falseRanges, (skip ?? 0) + 1);
+
+    return a + b;
+}
+
+class Range
+{
+    internal string Name;
+    internal int Start, Finish;
+    internal Range Clone() => new Range { Finish = Finish, Start = Start };
+    internal Range Intersect(Range range)
+    {
+        if (range.Name != this.Name)
+            return range;
+        if (range.Start > this.Finish || range.Finish < this.Start)
+            return null;
+
+        return new Range { Start = Math.Max(Start, range.Start), Finish = Math.Min(Finish, range.Finish) };
+    }
 }
 
 class Xmas
@@ -73,18 +93,24 @@ class Rule
 {
     internal string[] splits;
     internal string Name;
+    internal string C => splits[0];
     internal static Rule Parse(string s) => new Rule
     {
         splits = s.Split(new[] { '<', '>', ':' }, StringSplitOptions.RemoveEmptyEntries),
         Name = s
     };
 
+    internal (Range, Range) TwoRanges()
+    {
+        return Name.Contains("<")
+            ? (new Range { Start = 1, Finish = int.Parse(splits[1]) - 1, Name = C }, new Range { Start = int.Parse(splits[1]), Finish = 4000, Name = C })
+            : (new Range { Start = int.Parse(splits[1]) + 1, Finish = 4000, Name = C }, new Range { Start = 1, Finish = int.Parse(splits[1]), Name = C });
+    }
+
     internal string Apply(Xmas xmas)
     {
         if (splits.Length == 1)
             return splits[0];
-        if (!xmas.Dict.ContainsKey(splits[0]))
-            return "";
         if (Name.Contains("<") && xmas.Dict[splits[0]] < int.Parse(splits[1]))
             return splits[2];
         if (Name.Contains(">") && xmas.Dict[splits[0]] > int.Parse(splits[1]))
@@ -99,7 +125,7 @@ class RuleSet
     internal List<Rule> Rules;
     internal string Name;
 
-    internal string Apply(Xmas xmas) => Rules.Select(x => x.Apply(xmas)).FirstOrDefault(x => x != "");
+    internal string Apply(Xmas xmas) => Rules.Select(x => x.Apply(xmas)).First(x => x != "");
 
     internal static RuleSet Parse(string s)
     {
