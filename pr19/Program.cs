@@ -28,6 +28,9 @@ long Second(string[] lines)
 
 long Recurse(string ruleName, List<Range> ranges, int? skip = null)
 {
+    if (ranges.Any(x => x.IsEmpty()))
+        return 0;
+
     if (ruleName == "A")
         return ranges.Select(x => x.Finish - x.Start + 1).Aggregate(1L, (s, n) => s *= n);
 
@@ -42,8 +45,8 @@ long Recurse(string ruleName, List<Range> ranges, int? skip = null)
     var trueRanges = ranges.Select(x => x.Intersect(twoRanges.Item1)).ToList();
     var falseRanges = ranges.Select(x => x.Intersect(twoRanges.Item2)).ToList();
 
-    var a = trueRanges.Any(x => x == null) ? 0 : Recurse(rule.splits.Last(), trueRanges);
-    var b = falseRanges.Any(x => x == null) ? 0 : Recurse(ruleName, falseRanges, (skip ?? 0) + 1);
+    var a = Recurse(rule.splits.Last(), trueRanges);
+    var b = Recurse(ruleName, falseRanges, (skip ?? 0) + 1);
 
     return a + b;
 }
@@ -57,11 +60,11 @@ class Range
     {
         if (range.Name != this.Name)
             return this;
-        if (range.Start > this.Finish || range.Finish < this.Start)
-            return null;
 
         return new Range { Start = Math.Max(Start, range.Start), Finish = Math.Min(Finish, range.Finish), Name = this.Name };
     }
+
+    internal bool IsEmpty() => this.Start > this.Finish;
 }
 
 class Xmas
