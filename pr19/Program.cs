@@ -1,27 +1,20 @@
 ﻿var lines = File.ReadAllLines("TextFile2.txt");
-var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
-var xmass = lines.Skip(rulesets.Count + 1).Select(Xmas.Parse).Where(xmas =>
+
+Console.WriteLine(First(lines));
+
+int First(string[] lines)
 {
-    var next = "in";
+    var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
+    var result = lines.Skip(rulesets.Count + 1).Select(Xmas.Parse).Where(xmas =>
+    {
+        var next = "in";
 
-    while (!"AR".Contains(next))
-        next = rulesets[next].Apply(xmas);
+        while (!"AR".Contains(next))
+            next = rulesets[next].Apply(xmas);
 
-    return next == "A";
-}).Sum(xmas => xmas.Sum());
-
-
-Console.WriteLine(xmass);
-Console.WriteLine(Second(lines));
-
-long First(string[] lines)
-{
-    return 0;
-}
-
-long Second(string[] lines)
-{
-    return 0;
+        return next == "A";
+    }).Sum(xmas => xmas.Sum());
+    return result;
 }
 
 class Xmas
@@ -44,25 +37,20 @@ class Xmas
     }
 
     internal int Sum() => Dict.Values.Sum();
-
-
 }
 
 class Rule
 {
+    internal string[] splits;
     internal string Name;
-    internal static Rule Parse(string s)
+    internal static Rule Parse(string s) => new Rule
     {
-        var result = new Rule
-        {
-            Name = s,
-        };
-        return result;
-    }
+        splits = s.Split(new[] { '<', '>', ':' }, StringSplitOptions.RemoveEmptyEntries),
+        Name = s
+    };
 
     internal string Apply(Xmas xmas)
     {
-        var splits = Name.Split(new[] { '<', '>', ':' }, StringSplitOptions.RemoveEmptyEntries);
         if (splits.Length == 1)
             return splits[0];
         if (Name.Contains("<") && xmas.Dict[splits[0]] < int.Parse(splits[1]))
