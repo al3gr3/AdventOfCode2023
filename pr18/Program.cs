@@ -6,7 +6,6 @@
     { "U",  new Point { Y = -1, X = 0 } },
 };
 
-
 Console.WriteLine(SolveWithFill(File.ReadAllLines("TextFile1.txt"), 10, 10, new Point { X = 0, Y = 0 }));
 Console.WriteLine(SolveWithFill(File.ReadAllLines("TextFile2.txt"), 500, 600, new Point { X = 250, Y = 250 }));
 
