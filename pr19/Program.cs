@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-var lines = File.ReadAllLines("TextFile1.txt");
+var lines = File.ReadAllLines("TextFile2.txt");
 var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
 
 Console.WriteLine(First(lines));
@@ -54,15 +54,15 @@ class Range
 {
     internal string Name;
     internal int Start, Finish;
-    internal Range Clone() => new Range { Finish = Finish, Start = Start };
+    internal Range Clone() => new Range { Finish = Finish, Start = Start, Name = Name };
     internal Range Intersect(Range range)
     {
         if (range.Name != this.Name)
-            return range;
+            return this.Clone();
         if (range.Start > this.Finish || range.Finish < this.Start)
             return null;
 
-        return new Range { Start = Math.Max(Start, range.Start), Finish = Math.Min(Finish, range.Finish) };
+        return new Range { Start = Math.Max(Start, range.Start), Finish = Math.Min(Finish, range.Finish), Name = this.Name };
     }
 }
 
