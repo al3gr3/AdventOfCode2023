@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-var lines = File.ReadAllLines("TextFile2.txt");
+﻿var lines = File.ReadAllLines("TextFile2.txt");
 var rulesets = lines.TakeWhile(x => !string.IsNullOrWhiteSpace(x)).Select(RuleSet.Parse).ToDictionary(x => x.Name);
 
 Console.WriteLine(First(lines));
@@ -44,8 +42,8 @@ long Recurse(string ruleName, List<Range> ranges, int? skip = null)
     var trueRanges = ranges.Select(x => x.Intersect(twoRanges.Item1)).ToList();
     var falseRanges = ranges.Select(x => x.Intersect(twoRanges.Item2)).ToList();
 
-    var a = trueRanges.Any(x => x == null) ? 0 :  Recurse(rule.splits.Last(), trueRanges);
-    var b = falseRanges.Any(x => x == null) ? 0 :  Recurse(ruleName, falseRanges, (skip ?? 0) + 1);
+    var a = trueRanges.Any(x => x == null) ? 0 : Recurse(rule.splits.Last(), trueRanges);
+    var b = falseRanges.Any(x => x == null) ? 0 : Recurse(ruleName, falseRanges, (skip ?? 0) + 1);
 
     return a + b;
 }
@@ -54,11 +52,11 @@ class Range
 {
     internal string Name;
     internal int Start, Finish;
-    internal Range Clone() => new Range { Finish = Finish, Start = Start, Name = Name };
+
     internal Range Intersect(Range range)
     {
         if (range.Name != this.Name)
-            return this.Clone();
+            return this;
         if (range.Start > this.Finish || range.Finish < this.Start)
             return null;
 
