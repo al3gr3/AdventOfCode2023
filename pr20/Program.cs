@@ -56,7 +56,7 @@ List<Module> Parse(string[] lines)
     {
         var splits = line.Split(new[] { '-', '>', ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-        var name = new string(splits[0].Skip(1).ToArray());
+        var name = splits[0][1..];
 
         var module = FindOrAdd(name, result);
         module.Type = splits[0][0];
@@ -86,8 +86,8 @@ class Module
 
     internal string Name;
 
-    internal List<Module> SendsTo = new List<Module>();
-    internal Dictionary<Module, bool> ReceivesFrom = new Dictionary<Module, bool>();
+    internal List<Module> SendsTo = new();
+    internal Dictionary<Module, bool> ReceivesFrom = new();
 
     internal bool IsOn;
 }
