@@ -1,66 +1,52 @@
 ﻿var lines = File.ReadAllLines("TextFile3.txt");
 var modules = Parse(lines);
+First();
 
-var broadcaster = modules.First(x => x.Name == "roadcaster");
-
-var countHigh = 0;
-var countLow = 0;
-for (var i = 0; i < 1000; i++)
-    Low(broadcaster);
-
-Console.WriteLine(countHigh);
-Console.WriteLine(countLow);
-
-Console.WriteLine(countLow * countHigh);
-
-void Low(Module seed)
+void First()
 {
-    countLow++;
-    var wave = new List<Module>();
-    wave.Add(seed);
-    var nextWave = new List<Module>();
-
-    while (wave.Any())
+    var countHigh = 0;
+    var countLow = 0;
+    var broadcaster = modules.First(x => x.Name == "roadcaster");
+    for (var i = 0; i < 1000; i++)
     {
-        foreach (var module in wave)
+        countLow++;
+        var wave = new List<Module> { broadcaster };
+        
+        while (wave.Any())
         {
-            var isSendingHigh = false;
-            if (module.Type == '%')
-                isSendingHigh = module.IsOn;
-            if (module.Type == '&')
-                isSendingHigh = !module.ReceivesFrom.Values.All(x => x);
-
-            foreach (var send in module.SendsTo)
+            var nextWave = new List<Module>();
+            foreach (var module in wave)
             {
-                if (isSendingHigh)
-                    countHigh++;
-                else
-                    countLow++;
-                if (isSendingHigh)
+                var isSendingHigh = false;
+                if (module.Type == '%')
+                    isSendingHigh = module.IsOn;
+                if (module.Type == '&')
+                    isSendingHigh = !module.ReceivesFrom.Values.All(x => x);
+
+                foreach (var send in module.SendsTo)
                 {
-                    if (send.Type == '%')
-                        continue;
-                }
-                else
-                {
-                    if (send.Type == '%')
+                    if (isSendingHigh)
+                        countHigh++;
+                    else
+                        countLow++;
+
+                    if (!isSendingHigh && send.Type == '%')
                     {
                         send.IsOn = !send.IsOn;
                         nextWave.Add(send);
                     }
-                }
 
-                if (send.Type == '&')
-                {
-                    send.ReceivesFrom[module] = isSendingHigh;
-                    nextWave.Add(send);
+                    if (send.Type == '&')
+                    {
+                        send.ReceivesFrom[module] = isSendingHigh;
+                        nextWave.Add(send);
+                    }
                 }
             }
+            wave = nextWave;
         }
-        (wave, nextWave) = (nextWave, wave);
-        nextWave.Clear();
     }
-    
+    Console.WriteLine(countHigh * countLow);
 }
 
 List<Module> Parse(string[] lines)
@@ -68,7 +54,6 @@ List<Module> Parse(string[] lines)
     var result = new List<Module>();
     foreach (var line in lines)
     {
-        // &inv -> b
         var splits = line.Split(new[] { '-', '>', ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
         var name = new string(splits[0].Skip(1).ToArray());
@@ -93,19 +78,6 @@ Module FindOrAdd(string s, List<Module> l)
         l.Add(m);
     }
     return m;
-}
-
-Console.WriteLine(First(lines));
-Console.WriteLine(Second(lines));
-
-long First(string[] lines)
-{
-return 0;
-}
-
-long Second(string[] lines)
-{
-return 0;
 }
 
 class Module
