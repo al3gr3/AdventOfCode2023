@@ -56,10 +56,11 @@ void First()
     foreach (var item in modules.Where(x => x.Type == '&'))
         Console.WriteLine($"{item.Name} {item.Cycle}");
 
-    var result = modules.Where(x => x.Type == '&')
+    var result = modules
+        .Where(x => x.Type == '&')
         .Select(x => x.Cycle)
-        .Where(x => x != 0).Where(x => x != 5000)
-        .Aggregate((s, n) => s = LCM(s, n));
+        .Where(x => x != 0 && x != 5000)
+        .Aggregate((s, n) => s *= n);
 
     Console.WriteLine(result);
 }
@@ -82,16 +83,6 @@ List<Module> Parse(string[] lines)
         foreach (var send in module.SendsTo)
             send.ReceivesFrom[module] = false;
     return result;
-}
-
-long LCM(long a, long b) => a * b / GCD(a, b);
-
-long GCD(long a, long b)
-{
-    while (b != 0)
-        (a, b) = (b, a % b);
-
-    return a;
 }
 
 Module FindOrAdd(string s, List<Module> l)
