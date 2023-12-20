@@ -7,11 +7,11 @@ void First()
     var countHigh = 0;
     var countLow = 0;
     var broadcaster = modules.First(x => x.Name == "roadcaster");
-    for (var i = 0; i < 1000; i++)
+    for (var i = 1; i <= 5000; i++)
     {
         countLow++;
         var wave = new List<Module> { broadcaster };
-        
+
         while (wave.Any())
         {
             var nextWave = new List<Module>();
@@ -21,7 +21,11 @@ void First()
                 if (module.Type == '%')
                     isSendingHigh = module.IsOn;
                 if (module.Type == '&')
+                {
                     isSendingHigh = !module.ReceivesFrom.Values.All(x => x);
+                    if (!isSendingHigh)
+                        module.Cycle = i;
+                }
 
                 foreach (var send in module.SendsTo)
                 {
@@ -45,8 +49,19 @@ void First()
             }
             wave = nextWave;
         }
+        if (i == 1000)
+            Console.WriteLine(countHigh * countLow);
     }
-    Console.WriteLine(countHigh * countLow);
+
+    foreach (var item in modules.Where(x => x.Type == '&'))
+        Console.WriteLine($"{item.Name} {item.Cycle}");
+
+    var result = modules.Where(x => x.Type == '&')
+        .Select(x => x.Cycle)
+        .Where(x => x != 0).Where(x => x != 5000)
+        .Aggregate((s, n) => s = LCM(s, n));
+
+    Console.WriteLine(result);
 }
 
 List<Module> Parse(string[] lines)
@@ -67,6 +82,16 @@ List<Module> Parse(string[] lines)
         foreach (var send in module.SendsTo)
             send.ReceivesFrom[module] = false;
     return result;
+}
+
+long LCM(long a, long b) => a * b / GCD(a, b);
+
+long GCD(long a, long b)
+{
+    while (b != 0)
+        (a, b) = (b, a % b);
+
+    return a;
 }
 
 Module FindOrAdd(string s, List<Module> l)
@@ -90,4 +115,6 @@ class Module
     internal Dictionary<Module, bool> ReceivesFrom = new();
 
     internal bool IsOn;
+
+    internal long Cycle;
 }
