@@ -93,7 +93,7 @@ void WalkOnInfinite(string[] lines, int n)
     };
 
     var wave = new List<Point> { start };
-    for (var i = 1; i <= n * 131 + 65; i++)
+    for (var i = 1; i < n * 131 + 65; i++)
     {
         var nextWave = new HashSet<Point>(new PointComparer());
         foreach (var point in wave)
@@ -109,8 +109,7 @@ void WalkOnInfinite(string[] lines, int n)
                 if (lines[check.Y][check.X] != '#' && !nextWave.Contains(next))
                     nextWave.Add(next);
             }
-        if (i != n * 131 + 65)
-            wave = nextWave.ToList();
+        wave = nextWave.ToList();
         //Console.WriteLine($"{i} {wave.Count}");
     }
     reds = wave.Where(p =>
