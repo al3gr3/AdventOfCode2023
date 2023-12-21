@@ -10,14 +10,14 @@
   <ItemGroup>
     <None Remove="TextFile1.txt" />
     <None Remove="TextFile2.txt" />
-    <None Remove="TextFile3.txt" />
+    <None Remove="TextFile4.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="TextFile1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TextFile3.txt">
+    <Content Include="TextFile4.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TextFile2.txt">
