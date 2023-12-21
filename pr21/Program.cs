@@ -10,7 +10,7 @@ var lines = File.ReadAllLines("TextFile2.txt");
 
 // 65 + 1 + 65
 // 26501365 = 202300 * 131 + 65
-//WalkOnInfinite(lines, 10);
+WalkOnInfinite(lines, 2);
 
 Console.WriteLine(Solve(2));
 Console.WriteLine(Solve(4));
@@ -28,19 +28,20 @@ long Solve(long n)
     // 6 851  630080
     // 8 1113 1077218
     // 10 1375 1643540
+    // 202300 609708004316870
     // solved on https://www.wolframalpha.com/input?i=system+equation+calculator&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation1%22%7D+-%3E%2293356+%3D+5+f+%2B+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation4%22%7D+-%3E%22%22&assumption=%22FSelect%22+-%3E+%7B%7B%22SolveSystemOf3EquationsCalculator%22%7D%7D&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation2%22%7D+-%3E%22302126+%3D+25+f+%2B+3+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation3%22%7D+-%3E%22630080+%3D+61+f+%2B+5+a+%2B+t%22
-    // 93356 = 9*7456 + 4*7442 - 3 d + 2 v
-    // 302126 = 25*7456 + 16*7442 - 5 d + 4 v
+    // after 3 equations becomes tautalogical
+    // g= 29909-b t=56132-b 
 
-    var even = 7442;
-    var odd = 7456;
-    var d = 3686;
-    var v = 3771;
-    // the formula is from https://github.com/villuna/aoc23/blob/main/rust/src/day21.rs
-    //return (n + 1) * (n + 1) * odd + n * n * even - (n + 1) * d + n * v;
+    //200 7442
+    //201 7456
 
-    var t = 0;
-    return n * n * even + (n - 1) * (n - 1) * odd + (n - 1) * blues + tops + (n - 2) * greens;
+    var oranges = 7442; // even
+    var reds = 7456; // odd
+    var blues = 8130;
+    var greens = 29909 - blues;
+    var tops = 56132 - blues;
+    return n * n * oranges + (n - 1) * (n - 1) * reds + (n - 1) * blues + tops + (n - 2) * greens;
 }
 
 long First(string[] lines)
@@ -91,9 +92,6 @@ void WalkOnInfinite(string[] lines, int n)
     var wave = new List<Point> { start };
     for (var i = 1; i <= n * 131 + 65; i++)
     {
-        if (i == 200 || i == 201)
-            Console.WriteLine("" + i + " " + wave.Where(p => 0 <= p.X && p.X < lines.First().Length && 0 <= p.Y && p.Y < lines.Length).Count());
-
         var nextWave = new HashSet<Point>(new PointComparer());
         foreach (var point in wave)
             foreach (var dir in directions)
@@ -108,11 +106,25 @@ void WalkOnInfinite(string[] lines, int n)
                 if (lines[check.Y][check.X] != '#' && !nextWave.Contains(next))
                     nextWave.Add(next);
             }
+        if (i != n * 131 + 65)
+            wave = nextWave.ToList();
 
-        wave = nextWave.ToList();
-
-        Console.WriteLine($"{i} {wave.Count}");
+        //Console.WriteLine($"{i} {wave.Count}");
     }
+    var w = lines.First().Length;
+    var h = lines.Length;
+    Console.WriteLine("reds " + wave.Where(p => 
+        0 <= p.X && p.X < w && 
+        0 <= p.Y && p.Y < h).Count());
+    Console.WriteLine("oranges " + wave.Where(p => 
+        0 <= p.X && p.X < w && 
+        h + 1 <= p.Y && p.Y < 2 * h).Count());
+
+    Console.WriteLine("blues " + wave.Where(p => 
+        w + 1 <= Math.Abs(p.X) && Math.Abs(p.X) < 2 * w && 
+        h + 1 <= Math.Abs(p.Y) && Math.Abs(p.Y) < 2 * h).Count());
+
+
 }
 
 int Mod(int x, int m)
