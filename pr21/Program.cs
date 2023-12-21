@@ -10,7 +10,7 @@ var lines = File.ReadAllLines("TextFile2.txt");
 
 // 65 + 1 + 65
 // 26501365 = 202300 * 131 + 65
-WalkOnInfinite(lines, 8);
+//WalkOnInfinite(lines, 8);
 
 // n * 131 + 65
 // 0  65   3770
@@ -19,7 +19,15 @@ WalkOnInfinite(lines, 8);
 // 3 458 182843
 // 4 589 302126 = 25 full + 3(a+b+c+d) + tops
 // 6 851 630080 = 61 full + 5(a+b+c+d) + tops
-
+/*
+     3
+    323
+   32123
+  3210123
+   32123
+    323
+     3 
+*/
 /*
 1 1
 2 5
@@ -50,12 +58,11 @@ long Solve(int n)
     return totalSquares * 7449 + (n - 1) * 29895 + 26216;
 }
 
-Console.WriteLine(81850984601L * 7449 + (202300L - 1) * 29895 + 26216); // 609714032047670 is not the right answer
-
 // 609121738999234 is too low 
 // 609129005334242 is too low 
 // 609135027400642 is too low 
 // 610280941185056 That's not the right answer 
+// 609714032047670 is not the right answer; 81850984601L * 7449 + (202300L - 1) * 29895 + 26216
 
 long First(string[] lines)
 {
