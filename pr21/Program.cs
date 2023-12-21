@@ -12,53 +12,29 @@ var lines = File.ReadAllLines("TextFile2.txt");
 // 26501365 = 202300 * 131 + 65
 //WalkOnInfinite(lines, 10);
 
-// n * 131 + 65
-// 0  65   3770
-// 1 196  33665
-// 2 327  93356 = 5 full + (a+b+c+d) + tops
-// 3 458 182843
-// 4 589 302126 = 25 full + 3(a+b+c+d) + tops
-// 6 851 630080 = 61 full + 5(a+b+c+d) + tops
-
-// solved on https://www.wolframalpha.com/input?i=system+equation+calculator&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation1%22%7D+-%3E%2293356+%3D+5+f+%2B+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation4%22%7D+-%3E%22%22&assumption=%22FSelect%22+-%3E+%7B%7B%22SolveSystemOf3EquationsCalculator%22%7D%7D&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation2%22%7D+-%3E%22302126+%3D+25+f+%2B+3+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation3%22%7D+-%3E%22630080+%3D+61+f+%2B+5+a+%2B+t%22
-
-/*
-     3
-    323
-   32123
-  3210123
-   32123
-    323
-     3 
-*/
-/*
-1 1
-2 5
-3 13
-4 25
-5 41
-6 61
-7 85
-8 113
-9 145
-10 181
-11 221
-*/
-
 Console.WriteLine(Solve(2));
 Console.WriteLine(Solve(4));
 Console.WriteLine(Solve(6));
 Console.WriteLine(Solve(8)); // this fits with WalkOnInfinite(lines, 8)!!
 Console.WriteLine(Solve(10)); // this fits with WalkOnInfinite(lines, 10)!!
-Console.WriteLine(Solve(202300)); // 609703709349574 is not the right answer ???
+Console.WriteLine(Solve(202300)); 
 
-long Solve(int n)
+
+long Solve(long n)
 {
-    var totalSquares = 1L;
-    for (var i = 2; i <= n; i++)
-        totalSquares += (4 * i - 4);
-    //f = 7449 and t = 26216 and a = 29895
-    return totalSquares * 7449 + (n - 1) * 29895 + 26216;
+    // n * 131 + 65
+    // 2 327  93356 
+    // 4 589  302126 
+    // 6 851  630080
+    // 8 1113 1077218
+    // 10 1375 1643540
+    // solved on https://www.wolframalpha.com/input?i=system+equation+calculator&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation1%22%7D+-%3E%2293356+%3D+5+f+%2B+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation4%22%7D+-%3E%22%22&assumption=%22FSelect%22+-%3E+%7B%7B%22SolveSystemOf3EquationsCalculator%22%7D%7D&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation2%22%7D+-%3E%22302126+%3D+25+f+%2B+3+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation3%22%7D+-%3E%22630080+%3D+61+f+%2B+5+a+%2B+t%22
+
+    var even = 7442;
+    var odd = 7456;
+    var d = 3686;
+    var v = 3771;
+    return (n + 1) * (n + 1) * odd + n * n * even - (n + 1) * d + n * v;
 }
 
 // 609121738999234 is too low 
@@ -66,6 +42,8 @@ long Solve(int n)
 // 609135027400642 is too low 
 // 610280941185056 That's not the right answer 
 // 609714032047670 is not the right answer; 81850984601L * 7449 + (202300L - 1) * 29895 + 26216
+// 609703709349574 is not the right answer ???
+// 305143283422918 
 
 long First(string[] lines)
 {
@@ -131,7 +109,10 @@ void WalkOnInfinite(string[] lines, int n)
             }
         
         wave = nextWave.ToList();
-        Console.WriteLine($"{i} {wave.Count}");
+        if (i == 200 || i == 201)
+            Console.WriteLine(wave.Where(p => 0 <= p.X && p.X < lines.First().Length && 0 <= p.Y && p.Y < lines.Length).Count());
+
+        //Console.WriteLine($"{i} {wave.Count}");
     }
 }
 
