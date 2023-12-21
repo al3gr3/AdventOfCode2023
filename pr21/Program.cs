@@ -6,9 +6,24 @@
     new Point { Y = -1, X = 0 },
 }.ToList();
 
-var lines = File.ReadAllLines("TextFile1.txt");
+var lines = File.ReadAllLines("TextFile2.txt");
 
-Console.WriteLine(Second(lines));
+var amounts = File.ReadLines("TextFile3.txt").Select(x => int.Parse(x.Split(' ').Last())).ToArray();
+int GetAmount(int step) => step < 129 ? amounts[step] : amounts[129 + (step - 129) % 2];
+
+// 65 + 1 + 65
+// 5 x 11 x 481843
+var steps = 26501365;
+Console.WriteLine(steps / 131); // 202300
+Console.WriteLine(steps % 131); // 65
+
+var totalSquares = 1L;
+for (var i = 1; i < 202300; i++)
+    totalSquares += (4 * i - 4);
+
+var result = totalSquares * (GetAmount(131)) + (4 * 202300 - 4) * GetAmount(65);
+Console.WriteLine(result);
+// 609121738999234 is too low
 
 long First(string[] lines)
 {
@@ -30,7 +45,7 @@ long First(string[] lines)
     };
 
     var wave = new List<Point> { start };
-    for (var i = 1; i <= 64; i++)
+    for (var i = 1; i <= 200; i++)
     {
         var nextWave = new List<Point>();
         foreach (var point in wave)
@@ -42,42 +57,7 @@ long First(string[] lines)
             }
 
         wave = nextWave;
-    }
-    return wave.Count;
-}
-
-long Second(string[] lines)
-{
-    var startY = Array.FindIndex(lines, x => x.Contains('S'));
-    var start = new Point
-    {
-        X = lines[startY].IndexOf('S'),
-        Y = startY,
-    };
-
-    var wave = new List<Point> { start };
-    for (var i = 1; i <= 5000; i++)
-    {
-        var nextWave = new List<Point>();
-        foreach (var point in wave)
-            foreach (var dir in directions)
-            {
-                var next = point.Clone().Add(dir);
-                var check = new Point
-                {
-                    X = next.X % lines.First().Length,
-                    Y = next.Y % lines.Length,
-                };
-                if (check.X < 0)
-                    check.X += lines.First().Length;
-                if (check.Y < 0)
-                    check.Y += lines.Length;
-
-                if (lines[check.Y][check.X] != '#' && !nextWave.Any(x => x.IsEqual(next)))
-                    nextWave.Add(next);
-            }
-
-        wave = nextWave;
+        Console.WriteLine($"{i} {wave.Count}");
     }
     return wave.Count;
 }
