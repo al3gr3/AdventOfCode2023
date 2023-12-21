@@ -17,13 +17,40 @@ var steps = 26501365;
 Console.WriteLine(steps / 131); // 202300
 Console.WriteLine(steps % 131); // 65
 
+Console.WriteLine(GetAmount(131));
+
 var totalSquares = 1L;
-for (var i = 1; i < 202300; i++)
+for (var i = 1; i <= 202300 + 1; i++)
     totalSquares += (4 * i - 4);
 
-var result = totalSquares * (GetAmount(131)) + (4 * 202300 - 4) * GetAmount(65);
+var result = totalSquares * GetAmount(131);
+
 Console.WriteLine(result);
 // 609121738999234 is too low
+// 609129005334242 is too low
+// 609135027400642 is too low
+/*
+//AB
+//CD
+var a = 0;
+var b = 0;
+var c = 0;
+var d = 0;
+
+result += (202300 - 2) * (a + c + d + GetAmountInQuadrant(65, "b"));
+result += (202300 - 2) * (a + b + d + GetAmountInQuadrant(65, "c"));
+result += (202300 - 2) * (c + b + d + GetAmountInQuadrant(65, "a"));
+result += (202300 - 2) * (a + b + c + GetAmountInQuadrant(65, "d"));
+
+result += c + d + GetAmountInQuadrant(65, "a") + GetAmountInQuadrant(65, "b");
+result += a + b + GetAmountInQuadrant(65, "c") + GetAmountInQuadrant(65, "d");
+
+result += a + c + GetAmountInQuadrant(65, "b") + GetAmountInQuadrant(65, "d");
+result += d + b + GetAmountInQuadrant(65, "c") + GetAmountInQuadrant(65, "a");
+
+int GetAmountInQuadrant(int step, string quadrant) => throw new NotImplementedException(); ;
+*/
+
 
 long First(string[] lines)
 {
