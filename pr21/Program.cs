@@ -37,7 +37,10 @@ long Solve(long n)
     var d = 3686;
     var v = 3771;
     // the formula is from https://github.com/villuna/aoc23/blob/main/rust/src/day21.rs
-    return (n + 1) * (n + 1) * odd + n * n * even - (n + 1) * d + n * v;
+    //return (n + 1) * (n + 1) * odd + n * n * even - (n + 1) * d + n * v;
+
+    var t = 0;
+    return n * n * even + (n - 1) * (n - 1) * odd + (n - 1) * blues + tops + (n - 2) * greens;
 }
 
 long First(string[] lines)
