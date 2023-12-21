@@ -22,7 +22,7 @@ Console.WriteLine(Solve(202300));
 
 long Solve(long n)
 {
-    // n * 131 + 65
+    // n * 131 + 65, result from WalkOnInfinite
     // 2 327  93356 
     // 4 589  302126 
     // 6 851  630080
