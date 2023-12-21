@@ -26,9 +26,10 @@ for (var i = 1; i <= 202300 + 1; i++)
 var result = totalSquares * GetAmount(131);
 
 Console.WriteLine(result);
-// 609121738999234 is too low
-// 609129005334242 is too low
-// 609135027400642 is too low
+// 609121738999234 is too low (???)
+// 609129005334242 is too low (i <= 202300) * getamount(131)
+// 609135027400642 is too low (i <= 202300 + 1) * getamount(131)
+// 610280941185056 That's not the right answer (i <= 202300 + 1) * GetAmount(130)
 /*
 //AB
 //CD
