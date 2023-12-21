@@ -40,14 +40,6 @@ long Solve(long n)
     return (n + 1) * (n + 1) * odd + n * n * even - (n + 1) * d + n * v;
 }
 
-// 609121738999234 is too low 
-// 609129005334242 is too low 
-// 609135027400642 is too low 
-// 610280941185056 That's not the right answer 
-// 609714032047670 is not the right answer; 81850984601L * 7449 + (202300L - 1) * 29895 + 26216
-// 609703709349574 is not the right answer ???
-// 305143283422918 
-
 long First(string[] lines)
 {
     for (var i = 0; i < lines.Length; i++)
@@ -97,7 +89,7 @@ void WalkOnInfinite(string[] lines, int n)
     for (var i = 1; i <= n * 131 + 65; i++)
     {
         if (i == 200 || i == 201)
-            Console.WriteLine(wave.Where(p => 0 <= p.X && p.X < lines.First().Length && 0 <= p.Y && p.Y < lines.Length).Count());
+            Console.WriteLine("" + i + " " + wave.Where(p => 0 <= p.X && p.X < lines.First().Length && 0 <= p.Y && p.Y < lines.Length).Count());
 
         var nextWave = new HashSet<Point>(new PointComparer());
         foreach (var point in wave)
@@ -116,7 +108,7 @@ void WalkOnInfinite(string[] lines, int n)
 
         wave = nextWave.ToList();
 
-        //Console.WriteLine($"{i} {wave.Count}");
+        Console.WriteLine($"{i} {wave.Count}");
     }
 }
 
