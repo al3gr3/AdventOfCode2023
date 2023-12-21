@@ -10,6 +10,9 @@ var lines = File.ReadAllLines("TextFile2.txt");
 
 // 65 + 1 + 65
 // 26501365 = 202300 * 131 + 65
+var oranges = 0; // even
+var reds = 0; // odd
+var blues = 0;
 WalkOnInfinite(lines, 2);
 
 Console.WriteLine(Solve(2));
@@ -17,7 +20,7 @@ Console.WriteLine(Solve(4));
 Console.WriteLine(Solve(6));
 Console.WriteLine(Solve(8)); // this fits with WalkOnInfinite(lines, 8)!!
 Console.WriteLine(Solve(10)); // this fits with WalkOnInfinite(lines, 10)!!
-Console.WriteLine(Solve(202300)); 
+Console.WriteLine(Solve(202300));
 
 
 long Solve(long n)
@@ -33,12 +36,9 @@ long Solve(long n)
     // after 3 equations becomes tautalogical
     // g= 29909-b t=56132-b 
 
-    //200 7442
-    //201 7456
-
-    var oranges = 7442; // even
-    var reds = 7456; // odd
-    var blues = 8130;
+    //var oranges = 7442; // even
+    //var reds = 7456; // odd
+    //var blues = 8130;
     var greens = 29909 - blues;
     var tops = 56132 - blues;
     return n * n * oranges + (n - 1) * (n - 1) * reds + (n - 1) * blues + tops + (n - 2) * greens;
@@ -68,7 +68,7 @@ long First(string[] lines)
     {
         var nextWave = new List<Point>();
         foreach (var point in wave)
-            foreach(var dir in directions)
+            foreach (var dir in directions)
             {
                 var next = point.Clone().Add(dir);
                 if (lines[next.Y][next.X] != '#' && !nextWave.Any(x => x.IsEqual(next)))
@@ -82,6 +82,9 @@ long First(string[] lines)
 
 void WalkOnInfinite(string[] lines, int n)
 {
+    var w = lines.First().Length;
+    var h = lines.Length;
+
     var startY = Array.FindIndex(lines, x => x.Contains('S'));
     var start = new Point
     {
@@ -99,8 +102,8 @@ void WalkOnInfinite(string[] lines, int n)
                 var next = point.Clone().Add(dir);
                 var check = new Point
                 {
-                    X = Mod(next.X, lines.First().Length),
-                    Y = Mod(next.Y, lines.Length),
+                    X = Mod(next.X, w),
+                    Y = Mod(next.Y, h),
                 };
 
                 if (lines[check.Y][check.X] != '#' && !nextWave.Contains(next))
@@ -108,23 +111,24 @@ void WalkOnInfinite(string[] lines, int n)
             }
         if (i != n * 131 + 65)
             wave = nextWave.ToList();
-
         //Console.WriteLine($"{i} {wave.Count}");
     }
-    var w = lines.First().Length;
-    var h = lines.Length;
-    Console.WriteLine("reds " + wave.Where(p => 
-        0 <= p.X && p.X < w && 
-        0 <= p.Y && p.Y < h).Count());
-    Console.WriteLine("oranges " + wave.Where(p => 
-        0 <= p.X && p.X < w && 
-        h + 1 <= p.Y && p.Y < 2 * h).Count());
+    reds = wave.Where(p =>
+        0 <= p.X && p.X < w &&
+        0 <= p.Y && p.Y < h).Count();
 
-    Console.WriteLine("blues " + wave.Where(p => 
-        w + 1 <= Math.Abs(p.X) && Math.Abs(p.X) < 2 * w && 
-        h + 1 <= Math.Abs(p.Y) && Math.Abs(p.Y) < 2 * h).Count());
+    blues = wave.Where(p =>
+        w + 1 <= Math.Abs(p.X) && Math.Abs(p.X) < 2 * w &&
+        h + 1 <= Math.Abs(p.Y) && Math.Abs(p.Y) < 2 * h).Count();
+
+    oranges = wave.Where(p =>
+        0 <= p.X && p.X < w &&
+        h <= p.Y && p.Y < 2 * h).Count();
 
 
+    Console.WriteLine("reds " + reds);
+    Console.WriteLine("oranges " + oranges);
+    Console.WriteLine("blues " + blues);
 }
 
 int Mod(int x, int m)
