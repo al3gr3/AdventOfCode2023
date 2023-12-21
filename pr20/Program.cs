@@ -1,8 +1,8 @@
 ﻿var lines = File.ReadAllLines("TextFile3.txt");
 var modules = Parse(lines);
-First();
+FirstAndSecond();
 
-void First()
+void FirstAndSecond()
 {
     var countHigh = 0;
     var countLow = 0;
