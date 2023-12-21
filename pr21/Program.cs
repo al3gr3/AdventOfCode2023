@@ -10,7 +10,7 @@ var lines = File.ReadAllLines("TextFile2.txt");
 
 // 65 + 1 + 65
 // 26501365 = 202300 * 131 + 65
-//WalkOnInfinite(lines, 8);
+//WalkOnInfinite(lines, 10);
 
 // n * 131 + 65
 // 0  65   3770
@@ -19,6 +19,9 @@ var lines = File.ReadAllLines("TextFile2.txt");
 // 3 458 182843
 // 4 589 302126 = 25 full + 3(a+b+c+d) + tops
 // 6 851 630080 = 61 full + 5(a+b+c+d) + tops
+
+// solved on https://www.wolframalpha.com/input?i=system+equation+calculator&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation1%22%7D+-%3E%2293356+%3D+5+f+%2B+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation4%22%7D+-%3E%22%22&assumption=%22FSelect%22+-%3E+%7B%7B%22SolveSystemOf3EquationsCalculator%22%7D%7D&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation2%22%7D+-%3E%22302126+%3D+25+f+%2B+3+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation3%22%7D+-%3E%22630080+%3D+61+f+%2B+5+a+%2B+t%22
+
 /*
      3
     323
@@ -42,12 +45,12 @@ var lines = File.ReadAllLines("TextFile2.txt");
 11 221
 */
 
-
 Console.WriteLine(Solve(2));
 Console.WriteLine(Solve(4));
 Console.WriteLine(Solve(6));
 Console.WriteLine(Solve(8)); // this fits with WalkOnInfinite(lines, 8)!!
-Console.WriteLine(Solve(202300)); // 609703709349574 is not the right answer
+Console.WriteLine(Solve(10)); // this fits with WalkOnInfinite(lines, 10)!!
+Console.WriteLine(Solve(202300)); // 609703709349574 is not the right answer ???
 
 long Solve(int n)
 {
