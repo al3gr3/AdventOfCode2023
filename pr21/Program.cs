@@ -7,6 +7,7 @@
 }.ToList();
 
 var lines = File.ReadAllLines("TextFile2.txt");
+Console.WriteLine(First(lines));
 
 // 65 + 1 + 65
 // 26501365 = 202300 * 131 + 65
@@ -57,7 +58,7 @@ long First(string[] lines)
     };
 
     var wave = new List<Point> { start };
-    for (var i = 1; i <= 200; i++)
+    for (var i = 1; i <= 64; i++)
     {
         var nextWave = new List<Point>();
         foreach (var point in wave)
@@ -86,8 +87,7 @@ void WalkOnInfinite(string[] lines, int n)
     };
 
     var wave = new List<Point> { start };
-    var steps = n * 131 + 65;
-    for (var i = 1; i <= steps; i++)
+    for (var i = 1; i <= n * 131 + 65; i++)
     {
         var nextWave = new HashSet<Point>(new PointComparer());
         foreach (var point in wave)
