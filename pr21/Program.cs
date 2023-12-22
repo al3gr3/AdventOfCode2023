@@ -6,15 +6,15 @@
     new Point { Y = -1, X = 0 },
 }.ToList();
 
-var lines = File.ReadAllLines("TextFile2.txt");
-Console.WriteLine(First(lines));
+var inputLines = File.ReadAllLines("TextFile2.txt");
+Console.WriteLine(First(inputLines));
 
 // 65 + 1 + 65
 // 26501365 = 202300 * 131 + 65
 var oranges = 0; // even
 var reds = 0; // odd
 var blues = 0;
-WalkOnInfinite(lines, 2);
+WalkOnInfinite(inputLines, 2);
 
 Console.WriteLine(Solve(2));
 Console.WriteLine(Solve(4));
@@ -40,72 +40,23 @@ long Solve(long n)
 
 long First(string[] lines)
 {
-    for (var i = 0; i < lines.Length; i++)
-        lines[i] = "#" + lines[i] + '#';
+    var temp = lines.Select(x => "#" + x + '#').ToList();
 
-    var border = new string(Enumerable.Repeat('#', lines.First().Length).ToArray());
+    var border = new string(Enumerable.Repeat('#', temp.First().Length).ToArray());
 
-    var temp = lines.ToList();
     temp.Insert(0, border);
     temp.Add(border);
-    lines = temp.ToArray();
 
-    var startY = Array.FindIndex(lines, x => x.Contains('S'));
-    var start = new Point
-    {
-        X = lines[startY].IndexOf('S'),
-        Y = startY,
-    };
-
-    var wave = new List<Point> { start };
-    for (var i = 1; i <= 64; i++)
-    {
-        var nextWave = new List<Point>();
-        foreach (var point in wave)
-            foreach (var dir in directions)
-            {
-                var next = point.Clone().Add(dir);
-                if (lines[next.Y][next.X] != '#' && !nextWave.Any(x => x.IsEqual(next)))
-                    nextWave.Add(next);
-            }
-
-        wave = nextWave;
-    }
+    var wave = Walk(temp.ToArray(), 64);
     return wave.Count;
 }
 
 void WalkOnInfinite(string[] lines, int n)
 {
+    var wave = Walk(lines, n * 131 + 65);
+
     var w = lines.First().Length;
     var h = lines.Length;
-
-    var startY = Array.FindIndex(lines, x => x.Contains('S'));
-    var start = new Point
-    {
-        X = lines[startY].IndexOf('S'),
-        Y = startY,
-    };
-
-    var wave = new List<Point> { start };
-    for (var i = 1; i <= n * 131 + 65; i++)
-    {
-        var nextWave = new HashSet<Point>(new PointComparer());
-        foreach (var point in wave)
-            foreach (var dir in directions)
-            {
-                var next = point.Clone().Add(dir);
-                var check = new Point
-                {
-                    X = Mod(next.X, w),
-                    Y = Mod(next.Y, h),
-                };
-
-                if (lines[check.Y][check.X] != '#' && !nextWave.Contains(next))
-                    nextWave.Add(next);
-            }
-        wave = nextWave.ToList();
-        //Console.WriteLine($"{i} {wave.Count}");
-    }
 
     reds = wave.Count(p =>
         0 <= p.X && p.X < w &&
@@ -135,7 +86,7 @@ void WalkOnInfinite(string[] lines, int n)
         },
     };
     blues = wave.Count(p => blueSquares.Any(x => x.Contains(p)));
-    
+
     oranges = wave.Count(p =>
         0 <= p.X && p.X < w &&
         h <= p.Y && p.Y < 2 * h);
@@ -143,6 +94,42 @@ void WalkOnInfinite(string[] lines, int n)
     Console.WriteLine("reds " + reds);
     Console.WriteLine("oranges " + oranges);
     Console.WriteLine("blues " + blues);
+}
+
+List<Point> Walk(string[] lines, int steps)
+{
+    var w = lines.First().Length;
+    var h = lines.Length;
+
+    var startY = Array.FindIndex(lines, x => x.Contains('S'));
+    var start = new Point
+    {
+        X = lines[startY].IndexOf('S'),
+        Y = startY,
+    };
+
+    var wave = new List<Point> { start };
+    for (var i = 1; i <= steps; i++)
+    {
+        var nextWave = new HashSet<Point>(new PointComparer());
+        foreach (var point in wave)
+            foreach (var dir in directions)
+            {
+                var next = point.Clone().Add(dir);
+                var check = new Point
+                {
+                    X = Mod(next.X, w),
+                    Y = Mod(next.Y, h),
+                };
+
+                if (lines[check.Y][check.X] != '#' && !nextWave.Contains(next))
+                    nextWave.Add(next);
+            }
+        wave = nextWave.ToList();
+        //Console.WriteLine($"{i} {wave.Count}");
+    }
+
+    return wave;
 }
 
 int Mod(int x, int m)
