@@ -32,9 +32,9 @@ long Solve(long n)
     // 10       1375                1643540
     // 202300   609708004316870
 
-    var tops = 93356 - 4 * oranges - 1 * reds - 1 * blues; // from the n = 2 
-    var greens = (302126 - 16 * oranges - 9 * reds - 3 * blues - tops) / 2; // from the n = 4
-    return n * n * oranges + (n - 1) * (n - 1) * reds + (n - 1) * blues + tops + (n - 2) * greens;
+    var purples = 93356 - 4 * oranges - 1 * reds - 1 * blues; // from the n = 2 
+    var greens = (302126 - 16 * oranges - 9 * reds - 3 * blues - purples) / 2; // from the n = 4
+    return n * n * oranges + (n - 1) * (n - 1) * reds + (n - 1) * blues + purples + (n - 2) * greens;
 }
 
 long First(string[] lines)
