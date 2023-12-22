@@ -18,29 +18,22 @@ WalkOnInfinite(lines, 2);
 Console.WriteLine(Solve(2));
 Console.WriteLine(Solve(4));
 Console.WriteLine(Solve(6));
-Console.WriteLine(Solve(8)); // this fits with WalkOnInfinite(lines, 8)!!
-Console.WriteLine(Solve(10)); // this fits with WalkOnInfinite(lines, 10)!!
+Console.WriteLine(Solve(8));
+Console.WriteLine(Solve(10));
 Console.WriteLine(Solve(202300));
-
 
 long Solve(long n)
 {
-    // n * 131 + 65, result from WalkOnInfinite
-    // 2 327  93356 
-    // 4 589  302126 
-    // 6 851  630080
-    // 8 1113 1077218
-    // 10 1375 1643540
-    // 202300 609708004316870
-    // solved on https://www.wolframalpha.com/input?i=system+equation+calculator&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation1%22%7D+-%3E%2293356+%3D+5+f+%2B+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation4%22%7D+-%3E%22%22&assumption=%22FSelect%22+-%3E+%7B%7B%22SolveSystemOf3EquationsCalculator%22%7D%7D&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation2%22%7D+-%3E%22302126+%3D+25+f+%2B+3+a+%2B+t%22&assumption=%7B%22F%22%2C+%22SolveSystemOf4EquationsCalculator%22%2C+%22equation3%22%7D+-%3E%22630080+%3D+61+f+%2B+5+a+%2B+t%22
-    // after 3 equations becomes tautalogical
-    // g= 29909-b t=56132-b 
+    // n        n * 131 + 65        result from WalkOnInfinite
+    // 2        327                 93356 
+    // 4        589                 302126 
+    // 6        851                 630080
+    // 8        1113                1077218
+    // 10       1375                1643540
+    // 202300   609708004316870
 
-    //var oranges = 7442; // even
-    //var reds = 7456; // odd
-    //var blues = 8130;
-    var greens = 29909 - blues;
-    var tops = 56132 - blues;
+    var tops = 93356 - 4 * oranges - 1 * reds - 1 * blues; // from the n = 2 
+    var greens = (302126 - 16 * oranges - 9 * reds - 3 * blues - tops) / 2; // from the n = 4
     return n * n * oranges + (n - 1) * (n - 1) * reds + (n - 1) * blues + tops + (n - 2) * greens;
 }
 
@@ -93,7 +86,8 @@ void WalkOnInfinite(string[] lines, int n)
     };
 
     var wave = new List<Point> { start };
-    for (var i = 1; i < n * 131 + 65; i++)
+    var steps = n * 131 + 65;
+    for (var i = 1; i <= steps; i++)
     {
         var nextWave = new HashSet<Point>(new PointComparer());
         foreach (var point in wave)
@@ -112,18 +106,39 @@ void WalkOnInfinite(string[] lines, int n)
         wave = nextWave.ToList();
         //Console.WriteLine($"{i} {wave.Count}");
     }
-    reds = wave.Where(p =>
+
+    reds = wave.Count(p =>
         0 <= p.X && p.X < w &&
-        0 <= p.Y && p.Y < h).Count();
+        0 <= p.Y && p.Y < h);
 
-    blues = wave.Where(p =>
-        w + 1 <= Math.Abs(p.X) && Math.Abs(p.X) < 2 * w &&
-        h + 1 <= Math.Abs(p.Y) && Math.Abs(p.Y) < 2 * h).Count();
-
-    oranges = wave.Where(p =>
+    var blueSquares = new[]
+    {
+        new Square
+        {
+            LeftUpper = new Point { X = w, Y = h },
+            RightDown = new Point { X = 2 * w, Y = 2 * h },
+        },
+        new Square
+        {
+            LeftUpper = new Point { X = -w, Y = -h },
+            RightDown = new Point { X = 0, Y = 0 },
+        },
+        new Square
+        {
+            LeftUpper = new Point { X = -w, Y = h },
+            RightDown = new Point { X = 0, Y = 2 * h },
+        },
+        new Square
+        {
+            LeftUpper = new Point { X = w, Y = -h },
+            RightDown = new Point { X = 2 * w , Y = 0 },
+        },
+    };
+    blues = wave.Count(p => blueSquares.Any(x => x.Contains(p)));
+    
+    oranges = wave.Count(p =>
         0 <= p.X && p.X < w &&
-        h <= p.Y && p.Y < 2 * h).Count();
-
+        h <= p.Y && p.Y < 2 * h);
 
     Console.WriteLine("reds " + reds);
     Console.WriteLine("oranges " + oranges);
@@ -143,6 +158,15 @@ public class PointComparer : IEqualityComparer<Point>
     public bool Equals(Point one, Point two) => one.IsEqual(two);
 
     public int GetHashCode(Point item) => item.X * item.Y;
+}
+
+public class Square
+{
+    public Point LeftUpper;
+    public Point RightDown;
+    public bool Contains(Point p) =>
+        LeftUpper.X <= p.X && p.X < RightDown.X &&
+        LeftUpper.Y <= p.Y && p.Y < RightDown.Y;
 }
 
 public class Point
