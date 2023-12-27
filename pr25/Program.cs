@@ -31,15 +31,15 @@ var color = new List<string>();
 
 var queue = new Queue<string>();
 queue.Enqueue(g.Keys.First());
+color.Add(g.Keys.First());
 
 while (queue.Any())
-{
-    var next = queue.Dequeue();
-    color.Add(next);
-    foreach (var s in g[next])
+    foreach (var s in g[queue.Dequeue()])
         if (!color.Contains(s))
+        {
+            color.Add(s);
             queue.Enqueue(s);
-}
+        }
 
 Console.WriteLine(color.Count() * (g.Keys.Count - color.Count()));
 
